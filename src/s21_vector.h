@@ -8,10 +8,6 @@
 template <class T>
 class Vector
 {
-    private:
-        size_t m_size;
-        size_t m_capacity;
-        T *arr;
     public:
         using value_type = T;
         using reference = T &;
@@ -20,49 +16,34 @@ class Vector
         using const_iterator = const T *;
         using size_type = size_t;
     private:
-        void reserve_more_capacity(size_type size);
+        size_type m_size;
+        size_type m_capacity;
+        value_type *m_data;
     public:
-        // default constructor (simplified syntax for assigning values to attributes)
-
-        Vector() : m_size(0U), m_capacity(0U), arr(nullptr) {}
-
-        // parametrized constructor for fixed size vector (explicit was used in order to
-        // avoid automatic type conversion)
-
-        explicit Vector(size_type n) : m_size(n), m_capacity(n), arr(n ? new T[n] : nullptr) {}
-
-        // initializer list constructor (allows creating lists with initializer lists, see main.cpp)
-
+        Vector();
+        explicit Vector(size_type new_size);
         Vector(std::initializer_list<value_type> const &items);
 
-        // copy constructor with simplified syntax
-
-        Vector(const Vector &v) : m_size(v.m_size), m_capacity(v.m_capacity), arr(v.arr) {};
+        // Vector(const Vector &v) : m_size(v.m_size), m_capacity(v.m_capacity), m_data(v.m_data) {};
         
-        // move constructor with simplified syntax
+        // Vector(Vector &&v) : m_size(v.m_size), m_capacity(v.m_capacity), m_data(v.m_data)
+        // {
+        //     v.m_data = nullptr;
+        //     v.m_size = 0;
+        // }
 
-        Vector(Vector &&v) : m_size(v.m_size), m_capacity(v.m_capacity), arr(v.arr)
-        {
-            v.arr = nullptr;
-            v.m_size = 0;
-        }
+        ~Vector() { delete[] m_data; }
 
-        // destructor
-
-        ~Vector() { delete[] arr; }
-
-        // some method examples
-        // size getter
 
         size_type size();
-
-        // element accessor
+        size_type capacity();
+        value_type *get_data_pointer();
 
         value_type at(size_type i);
 
-        // append new element
-
-        void push_back(value_type v);
+        void push_back(value_type value);
+    private:
+        void reserve_more_capacity(size_type new_capacity);
 };
 
 #endif

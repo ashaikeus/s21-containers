@@ -10,6 +10,7 @@ class List
     //     size_t m_capacity;
     //     T *arr;
     private:
+        
 
     public:
         using value_type = T;
