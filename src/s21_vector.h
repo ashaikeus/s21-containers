@@ -45,7 +45,16 @@ class Vector {
   Vector(const Vector &copy_vector) {
     size_ = copy_vector.size_;
     capacity_ = copy_vector.capacity_;
-    data_ = copy_vector.data_;
+    // data_ = copy_vector.data_;
+    if (size_ > 0) {
+      value_type *copy_data = new value_type[capacity_];
+      for (size_type element = 0; element < size_; element++) {
+        copy_data[element] = copy_vector.data_[element];
+      }
+      data_ = copy_data;
+    } else {
+      data_ = copy_vector.data_;
+    }
   }
 
   Vector(Vector &&move_vector) {
@@ -60,28 +69,52 @@ class Vector {
 
   ~Vector() { delete[] data_; }
 
-  size_type size() {
+  size_type size() const {
     return size_;
   }
 
-  size_type capacity() {
+  size_type capacity() const {
     return capacity_;
   }
 
-  const value_type *get_data_pointer() {
+  value_type *data() const {
     return data_;
   }
 
   value_type at(size_type i);
 
-  void push_back(value_type value);
+  void push_back(const value_type value) {
+    size_++;
+    if (size_ > capacity_) {
+        reserve(size_ * 2);
+    }
+    data_[size_] = value;
+  }
+
+  reference operator[](size_type index) {
+    return data_[index];
+  }
+
+  const_reference operator[](size_type index) const {
+    return data_[index];
+  }
 
  private:
-  size_type size_;
-  size_type capacity_;
-  value_type *data_;
+  size_type size_ = 0u;
+  size_type capacity_ = 0u;
+  value_type *data_ = nullptr;
 
-  void reserve_more_capacity(size_type new_capacity);
+  void reserve(size_type new_capacity) {
+    if (new_capacity > capacity_) {
+        value_type *larger_data_capacity = new value_type[new_capacity];
+        for (size_type element = 0; element < size_ && data_; element++) {
+            larger_data_capacity[element] = data_[element];
+        }
+        if (data_) delete[] data_;
+        data_ = larger_data_capacity;
+        capacity_ = new_capacity;
+    }
+  }
 };
 
 // template <class T>
