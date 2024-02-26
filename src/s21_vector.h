@@ -45,7 +45,6 @@ class Vector {
   Vector(const Vector &copy_vector) {
     size_ = copy_vector.size_;
     capacity_ = copy_vector.capacity_;
-    // data_ = copy_vector.data_;
     if (size_ > 0) {
       value_type *copy_data = new value_type[capacity_];
       for (size_type element = 0; element < size_; element++) {
@@ -67,28 +66,17 @@ class Vector {
     move_vector.capacity_ = 0u;
   }
 
-  ~Vector() { delete[] data_; }
-
-  size_type size() const {
-    return size_;
+  ~Vector() {
+    size_ = 0u;
+    capacity_ = 0u;
+    delete[] data_;
   }
 
-  size_type capacity() const {
-    return capacity_;
-  }
-
-  value_type *data() const {
-    return data_;
-  }
-
-  value_type at(size_type i);
-
-  void push_back(const value_type value) {
-    size_++;
-    if (size_ > capacity_) {
-        reserve(size_ * 2);
+  reference at(size_type index) {
+    if (index < 0 || index >= size_) {
+      throw std::out_of_range ("std::out_of_range");
     }
-    data_[size_] = value;
+    return data_[index];
   }
 
   reference operator[](size_type index) {
@@ -99,52 +87,59 @@ class Vector {
     return data_[index];
   }
 
+  const_reference front() {
+    return data_[0];
+  }
+
+  const_reference back() {
+    return data_[size_];
+  }
+
+  value_type *data() const {
+    return data_;
+  }
+
+  bool empty() const {
+    return capacity_ > 0 && size_ > 0 ? true : false;
+  }
+
+  size_type size() const {
+    return size_;
+  }
+
+  size_type max_size() const {
+    return std::numeric_limits<value_type>::max();
+  }
+
+  void reserve(size_type new_capacity) {
+    if (new_capacity > capacity_) {
+      value_type *larger_data_capacity = new value_type[new_capacity];
+      for (size_type element = 0; element < size_ && data_; element++) {
+        larger_data_capacity[element] = data_[element];
+      }
+      if (data_) delete[] data_;
+      data_ = larger_data_capacity;
+      capacity_ = new_capacity;
+    }
+  }
+
+  size_type capacity() const {
+    return capacity_;
+  }
+
+  void push_back(const value_type value) {
+    size_++;
+    if (size_ >= capacity_) {
+        reserve(size_ * 2);
+    }
+    data_[size_] = value;
+  }
+
  private:
   size_type size_ = 0u;
   size_type capacity_ = 0u;
   value_type *data_ = nullptr;
 
-  void reserve(size_type new_capacity) {
-    if (new_capacity > capacity_) {
-        value_type *larger_data_capacity = new value_type[new_capacity];
-        for (size_type element = 0; element < size_ && data_; element++) {
-            larger_data_capacity[element] = data_[element];
-        }
-        if (data_) delete[] data_;
-        data_ = larger_data_capacity;
-        capacity_ = new_capacity;
-    }
-  }
 };
-
-// template <class T>
-// void Vector<T>::reserve_more_capacity(size_type new_capacity)
-// {
-//     if (new_capacity > capacity_)
-//     {
-//         value_type *buff = new value_type[new_capacity];
-//         for (size_t i = 0; i < size_; ++i)
-//             buff[i] = std::move(data_[i]);
-//         delete[] data_;
-//         data_ = buff;
-//         capacity_ = new_capacity;
-//     }
-// }
-
-// template <typename T>
-// T Vector<T>::at(size_type i)
-// {
-//     return data_[i];
-// }
-
-// template <typename T>
-// void Vector<T>::push_back(T value)
-// {
-//     if (size_ == capacity_)
-//     {
-//         reserve_more_capacity(size_ * 2);
-//     }
-//     data_[size_++] = value;
-// }
 
 #endif

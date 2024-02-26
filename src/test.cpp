@@ -107,6 +107,33 @@ TEST(vector, move_constructor) {
   }
 }
 
+TEST(vector, at) {
+  Vector<int> vector = {0, 1, 2};
+  EXPECT_EQ(0, vector.at(0));
+  EXPECT_EQ(1, vector.at(1));
+  EXPECT_EQ(2, vector.at(2));
+  EXPECT_THROW(vector.at(-1), std::out_of_range);
+  EXPECT_THROW(vector.at(3), std::out_of_range);
+  vector.at(0) = 15;
+  EXPECT_EQ(15, vector.at(0));
+}
+
+TEST(vector, operator_index) {
+  Vector<int> vector = {0, 1, 2};
+  EXPECT_EQ(0, vector[0]);
+  EXPECT_EQ(1, vector[1]);
+  EXPECT_EQ(2, vector[2]);
+  vector[0] = 15;
+  EXPECT_EQ(15, vector[0]);
+}
+
+TEST(vector, front) {
+  Vector<int> vector = {0, 1, 2};
+  EXPECT_EQ(0, vector.front());
+  Vector<char> vector_char = {'a', 'b', 'c'};
+  EXPECT_EQ('a', vector_char.front());
+}
+
 TEST(vector, pushback) {
   Vector<int> vector;
   EXPECT_EQ(0u, vector.size());
@@ -115,5 +142,13 @@ TEST(vector, pushback) {
   vector.push_back(0);
   EXPECT_EQ(1u, vector.size());
   EXPECT_EQ(2u, vector.capacity());
+  EXPECT_EQ(0, vector[0]);
+  vector.push_back(0);
+  EXPECT_EQ(2u, vector.size());
+  EXPECT_EQ(4u, vector.capacity());
   EXPECT_EQ(0, vector[1]);
+  vector.push_back(0);
+  EXPECT_EQ(3u, vector.size());
+  EXPECT_EQ(4u, vector.capacity());
+  EXPECT_EQ(0, vector[2]);
 }
