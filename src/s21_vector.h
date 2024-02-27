@@ -5,6 +5,14 @@
 // #include <initializer_list>
 // #include <utility>
 
+template<typename Vector>
+class Iterator {
+  public:
+  Iterator();
+
+
+};
+
 template <class T>
 class Vector {
  public:
@@ -72,6 +80,21 @@ class Vector {
     delete[] data_;
   }
 
+  Vector& operator=(Vector &&vector) {
+    this->~Vector();
+    size_ = vector.size_;
+    capacity_ = vector.capacity_;
+    if (size_ > 0) {
+      value_type *copy_data = new value_type[capacity_];
+      for (size_type element = 0; element < size_; element++) {
+        copy_data[element] = vector.data_[element];
+      }
+      data_ = copy_data;
+    } else {
+      data_ = vector.data_;
+    }
+  }
+
   reference at(size_type index) {
     if (index < 0 || index >= size_) {
       throw std::out_of_range ("std::out_of_range");
@@ -99,6 +122,14 @@ class Vector {
     return data_;
   }
 
+  iterator begin() {
+    return data_;
+  }
+
+  iterator end() {
+    return data_ + size_;
+  }
+
   bool empty() const {
     return capacity_ > 0 && size_ > 0 ? false : true;
   }
@@ -108,8 +139,7 @@ class Vector {
   }
 
   size_type max_size() const {
-    // return (unsigned long)pow(2, 64) / (unsigned long)sizeof(value_type);
-    return std::numeric_limits<size_t>::max()/sizeof(value_type);
+    return std::numeric_limits<size_t>::max() / sizeof(value_type);
   }
 
   void reserve(size_type new_capacity) {
@@ -128,6 +158,50 @@ class Vector {
     return capacity_;
   }
 
+  void shrink_to_fit() {
+    if (size_ < capacity_ && data_) {
+      value_type *shrink_data_capacity = new value_type[size_];
+      for (size_type element = 0; element < size_ ; element++) {
+        shrink_data_capacity[element] = data_[element];
+      }
+      delete[] data_;
+      data_ = shrink_data_capacity;
+      capacity_ = size_;
+    }
+  }
+
+  void clear() {
+    if (data_) {
+      value_type *shrink_data_capacity = new value_type[capacity_];
+      delete[] data_;
+      data_ = shrink_data_capacity;
+      size_ = 0;
+    }
+
+  }
+
+  iterator insert(iterator pos, const_reference value) {
+    int position_difference = std::distance(pos, this->end());
+    size_++;
+    if (size_ >= capacity_) {
+      if (capacity_ == 0) reserve(1);
+      else reserve(capacity_ * 2);
+    }
+    for (iterator iter = this->end(); iter != this->end() - position_difference - 1; iter--) {
+      *iter = *(iter - 1);
+    }
+    pos = this->end() - position_difference - 1;
+    *pos = value;
+    return pos;
+  }
+
+  void erase(iterator pos) {
+    for (iterator iter = pos; iter != this->end() - 1; iter++) {
+      *iter = *(iter + 1);
+    }
+    size_--;
+  }
+
   void push_back(const value_type value) {
     if (size_ >= capacity_) {
       if (capacity_ == 0) reserve(1);
@@ -135,6 +209,24 @@ class Vector {
     }
     data_[size_] = value;
     size_++;
+  }
+
+  void pop_back() {
+    size_--;
+  }
+
+  void swap(Vector& other) {
+    size_type buff_size = other.size();
+    size_type buff_capacity = other.capacity();
+    value_type *buff_data = other.data();
+
+    other.data_ = this->data_;
+    other.size_ = this->size_;
+    other.capacity_ = this->capacity_;
+
+    data_ = buff_data;
+    size_ = buff_size;
+    capacity_ = buff_capacity;
   }
 
  private:

@@ -113,6 +113,22 @@ TEST(vector, move_constructor) {
   }
 }
 
+TEST(vector, operator_eq) {
+  Vector<int> vector;
+  Vector<int> copy_vector = vector;
+  EXPECT_EQ(0u, copy_vector.size());
+  EXPECT_EQ(0u, copy_vector.capacity());
+  EXPECT_EQ(copy_vector.data(), nullptr);
+
+  Vector<int> vector_five_elements = {0, 1, 2, 3, 4};
+  Vector<int> copy_vector_five_elements = vector_five_elements;
+  EXPECT_EQ(5u, copy_vector_five_elements.size());
+  EXPECT_EQ(5u, copy_vector_five_elements.capacity());
+  for (size_t element = 0; element < copy_vector_five_elements.size(); element++) {
+    EXPECT_EQ((int)element, copy_vector_five_elements[element]);
+  }
+}
+
 TEST(vector, at) {
   Vector<int> vector = {0, 1, 2};
   std::vector<int> true_vector = {0, 1, 2};
@@ -162,6 +178,36 @@ TEST(vector, direct_access_data) {
     EXPECT_EQ((int)element, data[element]);
   }
 }
+
+TEST(vector, iterator_begin) {
+  Vector<int> vector = {0, 1, 2};
+  std::vector<int> true_vector = {0, 1, 2};
+  EXPECT_EQ(*true_vector.begin(), *vector.begin());
+  true_vector.resize(0);
+  vector.clear();
+  vector.shrink_to_fit();
+  EXPECT_EQ(*true_vector.begin(), *vector.begin());
+
+  Vector<char> vector_char = {'a', 'b', 'c'};
+  std::vector<char> true_vector_char = {'a', 'b', 'c'};
+  EXPECT_EQ(*true_vector_char.begin(), *vector_char.begin());
+} 
+
+TEST(vector, iterator_end) {
+  Vector<int> vector = {0, 1, 2};
+  std::vector<int> true_vector = {0, 1, 2};
+  EXPECT_EQ(*true_vector.end(), *vector.end());
+  // for (Vector<int>::iterator iter = vector.begin(); iter != vector.end(); iter++) {
+  //   std::cout << *iter << std::endl;
+  // }
+  // for (int value : vector) {
+  //   std::cout << value << std::endl;
+  // }
+  true_vector.resize(0);
+  vector.clear();
+  vector.shrink_to_fit();
+  EXPECT_EQ(*true_vector.end(), *vector.end());
+} 
 
 TEST(vector, empty) {
   Vector<int> non_empty_vector = {0, 1, 2};
@@ -222,7 +268,77 @@ TEST(vector, capacity) {
   Vector<int> vector(3);
   std::vector<int> true_vector(3);
   EXPECT_EQ(true_vector.capacity(), vector.capacity());
+}
 
+TEST(vector, shrink_to_fit) {
+  Vector<int> vector;
+  std::vector<int> true_vector;
+  true_vector.shrink_to_fit();
+  vector.shrink_to_fit();
+  EXPECT_EQ(true_vector.size(), vector.size());
+  EXPECT_EQ(true_vector.capacity(), vector.capacity());
+  for (int element = 0; element < 1000; element++) {
+    true_vector.push_back(element);
+    vector.push_back(element);
+  }
+  true_vector.shrink_to_fit();
+  vector.shrink_to_fit();
+  EXPECT_EQ(true_vector.size(), vector.size());
+  EXPECT_EQ(true_vector.capacity(), vector.capacity());
+  true_vector.clear();
+  vector.clear();
+  true_vector.shrink_to_fit();
+  vector.shrink_to_fit();
+  EXPECT_EQ(true_vector.size(), vector.size());
+  EXPECT_EQ(true_vector.capacity(), vector.capacity());
+}
+
+TEST(vector, clear) {
+  Vector<int> vector;
+  std::vector<int> true_vector;
+  true_vector.clear();
+  vector.clear();
+  EXPECT_EQ(true_vector.size(), vector.size());
+  EXPECT_EQ(true_vector.capacity(), vector.capacity());
+  for (int element = 0; element < 1000; element++) {
+    true_vector.push_back(element);
+    vector.push_back(element);
+  }
+  EXPECT_EQ(true_vector.size(), vector.size());
+  EXPECT_EQ(true_vector.capacity(), vector.capacity());
+  true_vector.clear();
+  vector.clear();
+  EXPECT_EQ(true_vector.size(), vector.size());
+  EXPECT_EQ(true_vector.capacity(), vector.capacity());
+  for (size_t element = 0; element < vector.size(); element++) {
+    EXPECT_EQ(true_vector[element], vector[element]);
+  }
+}
+
+TEST(vector, insert) {
+  Vector<int> vector = {0, 1, 2};
+  std::vector<int> true_vector = {0, 1, 2};
+  vector.insert(vector.begin(), 3);
+  true_vector.insert(true_vector.begin(), 3);
+  EXPECT_EQ(true_vector[0], vector[0]);
+  vector.insert(vector.end(), 3);
+  true_vector.insert(true_vector.end(), 3);
+  EXPECT_EQ(true_vector[3], vector[3]);
+  EXPECT_EQ(true_vector.size(), vector.size());
+  EXPECT_EQ(true_vector.capacity(), vector.capacity());
+}
+
+TEST(vector, erase) {
+  Vector<int> vector = {0, 1, 2};
+  std::vector<int> true_vector = {0, 1, 2};
+  vector.erase(vector.begin());
+  true_vector.erase(true_vector.begin());
+  EXPECT_EQ(true_vector[0], vector[0]);
+  vector.erase(vector.begin() + 1);
+  true_vector.erase(true_vector.begin() + 1);
+  EXPECT_EQ(true_vector[1], vector[1]);
+  EXPECT_EQ(true_vector.size(), vector.size());
+  EXPECT_EQ(true_vector.capacity(), vector.capacity());
 }
 
 TEST(vector, pushback) {
@@ -245,4 +361,27 @@ TEST(vector, pushback) {
   true_vector.push_back(0);
   EXPECT_EQ(true_vector.size(), vector.size());
   EXPECT_EQ(true_vector[2], vector[2]);
+}
+
+TEST(vector, pop_back) {
+  Vector<int> vector = {0, 1, 2};
+  std::vector<int> true_vector = {0, 1, 2};
+  vector.pop_back();
+  true_vector.pop_back();
+  EXPECT_EQ(true_vector.size(), vector.size());
+  EXPECT_EQ(true_vector.capacity(), vector.capacity());
+}
+
+TEST(vector, swap) {
+  Vector<int> vector1 = {0, 1, 2};
+  Vector<int> vector2 = {3, 4};
+  EXPECT_EQ(0, vector1[0]);
+  EXPECT_EQ(3, vector2[0]);
+  EXPECT_EQ(3u, vector1.size());
+  EXPECT_EQ(2u, vector2.size());
+  vector1.swap(vector2);
+  EXPECT_EQ(3, vector1[0]);
+  EXPECT_EQ(0, vector2[0]);
+  EXPECT_EQ(2u, vector1.size());
+  EXPECT_EQ(3u, vector2.size());
 }
