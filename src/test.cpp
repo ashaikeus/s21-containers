@@ -172,6 +172,20 @@ TEST(vector, empty) {
   EXPECT_FALSE(empty_vector.empty());
 }
 
+TEST(vector, size) {
+  Vector<int> vector_int;
+  std::vector<int> true_vector_int;
+  EXPECT_EQ(true_vector_int.size(), vector_int.size());
+
+  Vector<char> vector_char;
+  std::vector<char> true_vector_char;
+  EXPECT_EQ(true_vector_char.size(), vector_char.size());
+
+  Vector<int> vector(3);
+  std::vector<int> true_vector(3);
+  EXPECT_EQ(true_vector.size(), vector.size());
+}
+
 TEST(vector, max_size) {
   Vector<int> vector_int;
   std::vector<int> true_vector_int;
@@ -182,6 +196,33 @@ TEST(vector, max_size) {
   // Vector<char> vector_char;
   // std::vector<char> true_vector_char;
   // EXPECT_EQ(true_vector_char.max_size(), vector_char.max_size());
+  //
+  // Кусок кода выше выдаёт ошибку, предел в два раза больше, чем на самом деле
+  //
+}
+
+TEST(vector, reserve) {
+  Vector<int> vector_int;
+  std::vector<int> true_vector_int;
+  EXPECT_EQ(true_vector_int.capacity(), vector_int.capacity());
+  vector_int.reserve(10);
+  true_vector_int.reserve(10);
+  EXPECT_EQ(true_vector_int.capacity(), vector_int.capacity());
+}
+
+TEST(vector, capacity) {
+  Vector<int> vector_int;
+  std::vector<int> true_vector_int;
+  EXPECT_EQ(true_vector_int.capacity(), vector_int.capacity());
+
+  Vector<char> vector_char;
+  std::vector<char> true_vector_char;
+  EXPECT_EQ(true_vector_char.capacity(), vector_char.capacity());
+
+  Vector<int> vector(3);
+  std::vector<int> true_vector(3);
+  EXPECT_EQ(true_vector.capacity(), vector.capacity());
+
 }
 
 TEST(vector, pushback) {

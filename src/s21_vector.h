@@ -108,7 +108,8 @@ class Vector {
   }
 
   size_type max_size() const {
-    return (unsigned long)pow(2, 64) / (unsigned long)sizeof(value_type);
+    // return (unsigned long)pow(2, 64) / (unsigned long)sizeof(value_type);
+    return std::numeric_limits<size_t>::max()/sizeof(value_type);
   }
 
   void reserve(size_type new_capacity) {
