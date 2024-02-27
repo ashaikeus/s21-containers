@@ -21,7 +21,6 @@ test:
 	@echo "\033[1;34mCreating tests\033[0m"
 	@$(CC) $(FLAGS) $(CPPFLAGS) $(LDFLAGS) $(SRCS) $(TEST_SRCS) $(TEST_FLAGS) -o test
 	@leaks -q --atExit -- ./test
-	@# @./test
 	@echo "\033[1;42m DONE \033[0m" 
 
 clean:

@@ -92,7 +92,7 @@ class Vector {
   }
 
   const_reference back() {
-    return data_[size_];
+    return data_[size_ - 1];
   }
 
   value_type *data() const {
@@ -100,7 +100,7 @@ class Vector {
   }
 
   bool empty() const {
-    return capacity_ > 0 && size_ > 0 ? true : false;
+    return capacity_ > 0 && size_ > 0 ? false : true;
   }
 
   size_type size() const {
@@ -108,7 +108,7 @@ class Vector {
   }
 
   size_type max_size() const {
-    return std::numeric_limits<value_type>::max();
+    return (unsigned long)pow(2, 64) / (unsigned long)sizeof(value_type);
   }
 
   void reserve(size_type new_capacity) {
@@ -128,11 +128,12 @@ class Vector {
   }
 
   void push_back(const value_type value) {
-    size_++;
     if (size_ >= capacity_) {
-        reserve(size_ * 2);
+      if (capacity_ == 0) reserve(1);
+      else reserve(capacity_ * 2);
     }
     data_[size_] = value;
+    size_++;
   }
 
  private:
