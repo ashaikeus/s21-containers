@@ -5,12 +5,76 @@
 // #include <initializer_list>
 // #include <utility>
 
+namespace s21
+{
+
 template<typename Vector>
 class Iterator {
-  public:
-  Iterator();
+ public:
+  using value_type = typename Vector::value_type;
+  using iterator = value_type *;
+  using reference = value_type &;
+ public:
+  Iterator(iterator ptr) {
+    ptr_ = ptr; 
+  }
 
+  Iterator& operator++() {
+    ptr_++;
+    return *this;
+  }
+  
+  Iterator operator++(int) {
+    Iterator iter = *this;
+    ++(*this);
+    return iter;
+  }
 
+  Iterator& operator--() {
+    ptr_--;
+    return *this;
+  }
+  
+  Iterator operator--(int) {
+    Iterator iter = *this;
+    --(*this);
+    return iter;
+  }
+
+  reference operator[](int index) {
+    return *(ptr_[index]);
+  }
+
+  iterator operator->() {
+    return ptr_;
+  }
+
+  reference operator*() {
+    return *ptr_;
+  }
+
+  iterator operator+(int value) {
+    return ptr_ + value;
+  }
+
+  iterator operator-(int value) {
+    return ptr_ - value;
+  }
+
+  bool operator==(const Iterator& other) const {
+    return ptr_ == other.ptr_;
+  }
+
+  bool operator!=(const Iterator& other) const {
+    return ptr_ != other.ptr_;
+  }
+
+  iterator get_ptr() {
+    return ptr_;
+  }
+
+ private:
+  iterator ptr_;
 };
 
 template <class T>
@@ -19,8 +83,9 @@ class Vector {
   using value_type = T;
   using reference = T &;
   using const_reference = const T &;
-  using iterator = T *;
-  using const_iterator = const T *;
+  // using iterator = T *;
+  using iterator = Iterator<Vector<value_type>>;
+  // using const_iterator = const T *;
   using size_type = size_t;
 
   Vector() {
@@ -123,11 +188,11 @@ class Vector {
   }
 
   iterator begin() {
-    return data_;
+    return iterator(data_);
   }
 
   iterator end() {
-    return data_ + size_;
+    return iterator(data_ + size_);
   }
 
   bool empty() const {
@@ -181,7 +246,7 @@ class Vector {
   }
 
   iterator insert(iterator pos, const_reference value) {
-    int position_difference = std::distance(pos, this->end());
+    int position_difference = this->end().get_ptr() - pos.get_ptr();
     size_++;
     if (size_ >= capacity_) {
       if (capacity_ == 0) reserve(1);
@@ -235,5 +300,7 @@ class Vector {
   value_type *data_ = nullptr;
 
 };
+  
+} // namespace s21
 
 #endif
