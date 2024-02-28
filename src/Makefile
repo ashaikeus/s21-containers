@@ -8,7 +8,7 @@ export CPPFLAGS:="-I/opt/homebrew/include" -lstdc++
 SRCS:=$(wildcard s21*.cpp)
 HDRS:=$(wildcard s21*.h)
 OBJS:=$(SRCS:%.cpp=%.o)
-TEST_SRCS:=$(wildcard test.cpp)
+TEST_SRCS:=$(wildcard test*.cpp)
 
 LIB_NAME:=s21_matrix_oop.a
 
