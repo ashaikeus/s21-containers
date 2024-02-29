@@ -80,16 +80,29 @@ class Set {
         }
     }
 
-    Set(const Set &s);  // copy
+    Set(const Set &copySet) : nodeCount_(copySet.nodeCount_) {
+        for (iterator it = copySet.begin(); it != copySet.end(); ++it) {
+            insert(*it);
+        }
+    }
 
-    Set(Set &&s);  // move
+    Set(Set &&moveSet);
 
     ~Set() {
         root_ = nullptr;
         nodeCount_ = 0;
     };
 
-    // operator=(Set &&s);
+    Set& operator=(Set &&s);
+
+    bool operator==(Set &other) {
+        bool ret = true;
+        if (size() != other.size()) ret = false;
+        else for (iterator it = begin(), ot = other.begin(); it != end(), ot != other.end(); ++it, ++ot) {
+            if (*it != *ot) ret = false;
+        }
+        return ret;
+    }
 
     iterator begin() {
         Node* cur = root_;
@@ -157,15 +170,19 @@ class Set {
         return std::make_pair(newNode, rBool);
     }
 
-    // void erase(iterator pos);
+    void erase(iterator pos);
     void swap(Set& other);
-    void merge(Set& other);
+    void merge(Set& other) {
+        for (iterator it = other.begin(); it != other.end(); ++it) {
+            insert(it->current_.data_);
+        }
+    }
 
     // iterator find(const Key& key);
     // bool contains(const Key& key);
 
     void printAll() {
-        // int i = 0;  // limiter
+        // int i = 0;  // limiter in case something breaks
         for (iterator it = begin(); it != end(); ++it) {
             std::cout << *it << " ";
             // i++;

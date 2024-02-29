@@ -15,6 +15,16 @@ TEST(SetSuite, InitFromList) {
     testSet.clear();
 }
 
+TEST(SetSuite, InitCopy) {
+    Set<int> trueSet({50, 45, 1, 30, 49, 46, 55, 51, 53});
+    Set<int> testSet(trueSet);
+    
+    EXPECT_EQ(testSet.size(), trueSet.size());
+    EXPECT_EQ(1, trueSet == testSet);
+    trueSet.clear();
+    testSet.clear();
+}
+
 TEST(SetSuite, SetTests) {
     std::set<int> trueSet = {50, 45, 1, 30, 49, 46, 55, 51, 53};
     // for (int num : trueSet) {
