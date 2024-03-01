@@ -18,7 +18,6 @@ class Set {
         Node* right_ = nullptr;
         Node* parent_ = nullptr;
         value_type data_;
-        bool visited_ = false;
 
         Node(const value_type data) : data_(data) {};
         ~Node() {
@@ -42,35 +41,100 @@ class Set {
     class Iterator {
        private:
         Node* current_;
+        Node* successor_;
+        Node* root_;
 
        public:
-        Iterator(Node* node) : current_(node) {}
+        Iterator(Node* node) : current_(node), successor_(nullptr), root_(root_) {}
 
-        Iterator operator++() {  // TO-DO duplicates (perhaps rewrite code logic)
-            if (current_->right_ != nullptr && !current_->right_->visited_) {
+        Iterator operator++() {
+            if (current_ == nullptr) {
+                current_ = root_;
+                if (current_ == nullptr) throw std::underflow_error("Empty tree");
+                while (current_->left_ != nullptr) {
+                    current_ = current_->left_;
+                }
+            }
+            if (current_->right_ != nullptr) {
                 current_ = current_->right_;
-            } else if (current_->left_ != nullptr && !current_->left_->visited_) {
-                current_ = current_->left_;
-            } else if (current_->parent_ != nullptr) {
-                current_->visited_ = true;
-                current_ = current_->parent_;
+                while (current_->left_ != nullptr) {
+                    current_ = current_->left_;
+                }
             } else {
-                current_ = nullptr;
+                successor_ = current_->parent_;
+                while (current_->parent_ != nullptr && current_ == current_->parent_->right_) {
+                    current_ = successor_;
+                    successor_ = successor_->parent_;
+                }
+                current_ = successor_;
             }
             return *this;
         }
 
-        bool operator!=(const Iterator& other) {
-            return (current_ != other.current_);
+        template <class L>
+        bool operator!=(const L& other) const {
+            return (current_ != other.getCurrent());
         }
 
-        value_type operator*() {
+        value_type operator*() const {
             return current_->data_;
         }
+
+        Node* getCurrent() const {
+            return current_;
+        }
     };
+
+    template <class value_type>
+    class ConstIterator {
+       private:
+        Node* current_;
+        Node* successor_;
+        Node* root_;
+
+       public:
+        ConstIterator(Node* node) : current_(node), successor_(nullptr), root_(root_) {}
+        
+        ConstIterator operator++() {
+            if (current_ == nullptr) {
+                current_ = root_;
+                if (current_ == nullptr) throw std::underflow_error("Empty tree");
+                while (current_->left_ != nullptr) {
+                    current_ = current_->left_;
+                }
+            }
+            if (current_->right_ != nullptr) {
+                current_ = current_->right_;
+                while (current_->left_ != nullptr) {
+                    current_ = current_->left_;
+                }
+            } else {
+                successor_ = current_->parent_;
+                while (current_->parent_ != nullptr && current_ == current_->parent_->right_) {
+                    current_ = successor_;
+                    successor_ = successor_->parent_;
+                }
+                current_ = successor_;
+            }
+            return *this;
+        }
+
+        template <class L>
+        bool operator!=(const L& other) const {
+            return (current_ != other.getCurrent());
+        }
+
+        value_type operator*() const {
+            return current_->data_;
+        }
+
+        Node* getCurrent() const {
+            return current_;
+        }
+    };
+
     using iterator = Iterator<T>;
-    // using iterator = SetIterator<T>;
-    // using const_iterator = SetConstIterator<T>;
+    using const_iterator = ConstIterator<T>;
 
     Set() : root_(nullptr), nodeCount_(0) {}
 
@@ -80,9 +144,26 @@ class Set {
         }
     }
 
-    Set(const Set &copySet) : nodeCount_(copySet.nodeCount_) {
-        for (iterator it = copySet.begin(); it != copySet.end(); ++it) {
-            insert(*it);
+    Set(const Set &copySet) : root_(nullptr), nodeCount_(0) {
+        if (copySet.root_ != nullptr) {
+            root_ = new Node(copySet.root_->data_);
+            nodeCount_++;
+            copyNodes(copySet.root_, root_);
+        }
+    }
+
+    void copyNodes(Node* source, Node* destination) {
+        if (source->left_ != nullptr) {
+            destination->left_ = new Node(source->left_->data_);
+            destination->left_->parent_ = destination;
+            nodeCount_++;
+            copyNodes(source->left_, destination->left_);
+        }
+        if (source->right_ != nullptr) {
+            destination->right_ = new Node(source->right_->data_);
+            destination->right_->parent_ = destination;
+            nodeCount_++;
+            copyNodes(source->right_, destination->right_);
         }
     }
 
@@ -95,11 +176,13 @@ class Set {
 
     Set& operator=(Set &&s);
 
-    bool operator==(Set &other) {
+    bool operator==(const Set &other) const {
         bool ret = true;
         if (size() != other.size()) ret = false;
-        else for (iterator it = begin(), ot = other.begin(); it != end(), ot != other.end(); ++it, ++ot) {
+        else for (const_iterator it = cbegin(), ot = other.cbegin(); it != cend() && ot != other.cend() && ret;) {
             if (*it != *ot) ret = false;
+            ++it;
+            ++ot;
         }
         return ret;
     }
@@ -112,7 +195,15 @@ class Set {
         return cur;
     }
 
-    iterator end() {
+    const_iterator cbegin() const {
+        Node* cur = root_;
+        while (cur->left_) {
+            cur = cur->left_;
+        }
+        return cur;
+    }
+
+    iterator end() const {
         Node* cur = root_;
         while (cur->right_) {
             cur = cur->right_;
@@ -120,11 +211,19 @@ class Set {
         return cur->right_;
     }
 
-    bool empty() {
+    const_iterator cend() const {
+        Node* cur = root_;
+        while (cur->right_) {
+            cur = cur->right_;
+        }
+        return cur->right_;
+    }
+
+    bool empty() const {
         return (nodeCount_ == 0);
     }
 
-    size_type size() {
+    size_type size() const {
         return nodeCount_;
     }
 
@@ -139,19 +238,21 @@ class Set {
     }
 
     std::pair<iterator, bool> insert(const value_type& value) {
-        bool rBool = true;
+        bool add = true;
+        bool makeroot = false;
         Node* newNode = new Node(value);
-        if (root_ == nullptr && rBool) {
+        if (root_ == nullptr) {
             root_ = newNode;
-        } else if (rBool) {
+            makeroot = true;
+        } else {
             Node* cur = root_;
-            bool go = true;
-            while (go) {
+            bool looking = true;
+            while (looking) {
                 if (value < cur->data_) {
                     if (cur->left_ == nullptr) {
                         cur->left_ = newNode;
                         newNode->parent_ = cur;
-                        go = false;
+                        looking = false;
                     } else {
                         cur = cur->left_;
                     }
@@ -159,15 +260,19 @@ class Set {
                     if (cur->right_ == nullptr) {
                         cur->right_ = newNode;
                         newNode->parent_ = cur;
-                        go = false;
+                        looking = false;
                     } else {
                         cur = cur->right_;
                     }
+                } else {
+                    add = false;
+                    looking = false;
                 }
             }
         }
-        nodeCount_ += rBool;
-        return std::make_pair(newNode, rBool);
+        if (add) nodeCount_++;
+        if (!add && makeroot) root_ = nullptr;
+        return std::make_pair(newNode, add);
     }
 
     void erase(iterator pos);
@@ -181,14 +286,18 @@ class Set {
     // iterator find(const Key& key);
     // bool contains(const Key& key);
 
-    void printAll() {
+    void printAll() const {
         // int i = 0;  // limiter in case something breaks
-        for (iterator it = begin(); it != end(); ++it) {
-            std::cout << *it << " ";
-            // i++;
-            // if (i > 20) break;
+        if (!empty()) {
+            for (const_iterator it = cbegin(); it.getCurrent() != nullptr && it != cend(); ++it) {
+                std::cout << *it << " ";
+                // i++;
+                // if (i > 40) break;
+            }
+            std::cout << std::endl;
+        } else {
+            std::cout << "No elements in set" << std::endl;
         }
-        std::cout << std::endl;
     }
 };
 
