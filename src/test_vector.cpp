@@ -1,11 +1,11 @@
 #include "test.h"
 
-template<typename T>
+template <typename T>
 void print_vector(const s21::Vector<T>& vector) {
-    for (size_t element = 0; element < vector.size(); element++) {
-        std::cout << vector[element] << std::endl;
-    }
-    std::cout << "###################\n";
+  for (size_t element = 0; element < vector.size(); element++) {
+    std::cout << vector[element] << " element = " << element <<std::endl;
+  }
+  std::cout << "###################\n";
 }
 
 TEST(vector, standart_constructor) {
@@ -68,9 +68,11 @@ TEST(vector, list_constructor_nonempty) {
   s21::Vector<int> vector_five_elements = {0, 1, 2, 3, 4};
   std::vector<int> true_vector_five_elements = {0, 1, 2, 3, 4};
   EXPECT_EQ(true_vector_five_elements.size(), vector_five_elements.size());
-  EXPECT_EQ(true_vector_five_elements.capacity(), vector_five_elements.capacity());
+  EXPECT_EQ(true_vector_five_elements.capacity(),
+            vector_five_elements.capacity());
   for (size_t element = 0; element < vector_five_elements.size(); element++) {
-    EXPECT_EQ(true_vector_five_elements[element], vector_five_elements[element]);
+    EXPECT_EQ(true_vector_five_elements[element],
+              vector_five_elements[element]);
   }
 }
 
@@ -85,7 +87,8 @@ TEST(vector, copy_constructor) {
   s21::Vector<int> copy_vector_five_elements(vector_five_elements);
   EXPECT_EQ(5u, copy_vector_five_elements.size());
   EXPECT_EQ(5u, copy_vector_five_elements.capacity());
-  for (size_t element = 0; element < copy_vector_five_elements.size(); element++) {
+  for (size_t element = 0; element < copy_vector_five_elements.size();
+       element++) {
     EXPECT_EQ((int)element, copy_vector_five_elements[element]);
   }
 }
@@ -100,7 +103,8 @@ TEST(vector, move_constructor) {
 
   EXPECT_EQ(5u, move_vector_five_elements.size());
   EXPECT_EQ(5u, move_vector_five_elements.capacity());
-  for (size_t element = 0; element < move_vector_five_elements.size(); element++) {
+  for (size_t element = 0; element < move_vector_five_elements.size();
+       element++) {
     EXPECT_EQ((int)element, move_vector_five_elements[element]);
   }
 }
@@ -116,7 +120,8 @@ TEST(vector, operator_eq) {
   s21::Vector<int> copy_vector_five_elements = vector_five_elements;
   EXPECT_EQ(5u, copy_vector_five_elements.size());
   EXPECT_EQ(5u, copy_vector_five_elements.capacity());
-  for (size_t element = 0; element < copy_vector_five_elements.size(); element++) {
+  for (size_t element = 0; element < copy_vector_five_elements.size();
+       element++) {
     EXPECT_EQ((int)element, copy_vector_five_elements[element]);
   }
 }
@@ -165,7 +170,7 @@ TEST(vector, back) {
 
 TEST(vector, direct_access_data) {
   s21::Vector<int> vector = {0, 1, 2};
-  const int *data = vector.data();
+  const int* data = vector.data();
   for (size_t element = 0; element < vector.size(); element++) {
     EXPECT_EQ((int)element, data[element]);
   }
@@ -183,13 +188,14 @@ TEST(vector, iterator_begin) {
   s21::Vector<char> vector_char = {'a', 'b', 'c'};
   std::vector<char> true_vector_char = {'a', 'b', 'c'};
   EXPECT_EQ(*true_vector_char.begin(), *vector_char.begin());
-} 
+}
 
 TEST(vector, iterator_end) {
   s21::Vector<int> vector = {0, 1, 2};
   std::vector<int> true_vector = {0, 1, 2};
   EXPECT_EQ(*true_vector.end(), *vector.end());
-  // for (s21::Vector<int>::iterator iter = vector.begin(); iter != vector.end(); iter++) {
+  // for (s21::Vector<int>::iterator iter = vector.begin(); iter !=
+  // vector.end(); iter++) {
   //   std::cout << *iter << std::endl;
   // }
   // for (int value : vector) {
@@ -199,7 +205,7 @@ TEST(vector, iterator_end) {
   vector.clear();
   vector.shrink_to_fit();
   EXPECT_EQ(*true_vector.end(), *vector.end());
-} 
+}
 
 TEST(vector, empty) {
   s21::Vector<int> non_empty_vector = {0, 1, 2};
@@ -318,6 +324,59 @@ TEST(vector, insert) {
   EXPECT_EQ(true_vector[3], vector[3]);
   EXPECT_EQ(true_vector.size(), vector.size());
   EXPECT_EQ(true_vector.capacity(), vector.capacity());
+}
+
+TEST(vector, insert_many) {
+  s21::Vector<int> vector = {0, 1, 2};
+  s21::Vector<int> vector2 = {3, 4, 5};
+  s21::Vector<int> vector3 = {6, 7, 8};
+  s21::Iterator position = vector.begin();
+  position++;
+  position = vector.insert_many(position, vector2);
+  EXPECT_EQ(6u, vector.size());
+  EXPECT_EQ(0, vector[0]);
+  EXPECT_EQ(3, vector[1]);
+  EXPECT_EQ(4, vector[2]);
+  EXPECT_EQ(5, vector[3]);
+  EXPECT_EQ(1, vector[4]);
+  EXPECT_EQ(2, vector[5]);
+  position = vector.insert_many(position, vector3);
+  EXPECT_EQ(9u, vector.size());
+  EXPECT_EQ(0, vector[0]);
+  EXPECT_EQ(3, vector[1]);
+  EXPECT_EQ(4, vector[2]);
+  EXPECT_EQ(5, vector[3]);
+  EXPECT_EQ(6, vector[4]);
+  EXPECT_EQ(7, vector[5]);
+  EXPECT_EQ(8, vector[6]);
+  EXPECT_EQ(1, vector[7]);
+  EXPECT_EQ(2, vector[8]);
+  position = vector.insert_many(position);
+  EXPECT_EQ(9u, vector.size());
+  EXPECT_EQ(0, vector[0]);
+  EXPECT_EQ(3, vector[1]);
+  EXPECT_EQ(4, vector[2]);
+  EXPECT_EQ(5, vector[3]);
+  EXPECT_EQ(6, vector[4]);
+  EXPECT_EQ(7, vector[5]);
+  EXPECT_EQ(8, vector[6]);
+  EXPECT_EQ(1, vector[7]);
+  EXPECT_EQ(2, vector[8]);
+}
+
+TEST(vector, insert_many_back) {
+  s21::Vector<int> vector = {0, 1, 2};
+  s21::Vector<int> vector2 = {3, 4, 5};
+  s21::Vector<int> vector3 = {6, 7, 8};
+  vector.insert_many_back(vector2, vector3);
+  EXPECT_EQ(9u, vector.size());
+  for(int element = 0; element < (int)vector.size(); element++) {
+    EXPECT_EQ(element, vector[element]);
+  }
+  vector.insert_many_back();
+  EXPECT_EQ(9u, vector.size());
+  vector.insert_many_back(vector2, vector3);
+  EXPECT_EQ(15u, vector.size());
 }
 
 TEST(vector, erase) {
