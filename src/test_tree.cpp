@@ -30,7 +30,7 @@ TEST(SetSuite, InitMove) {
   s21::Set<int> testSet(std::move(moveSet));
   s21::Set<int> trueSet({50, 45, 1, 30});
   EXPECT_EQ(testSet.size(), trueSet.size());
-  EXPECT_EQ(0, moveSet.size());
+  EXPECT_EQ(0u, moveSet.size());
   EXPECT_TRUE(testSet == trueSet);
   moveSet.clear();
   testSet.clear();
@@ -94,7 +94,7 @@ TEST(SetSuite, Size) {
   std::set<int> trueSet1({50, 45, 1, 30});
   s21::Set<int> testSet2;
   EXPECT_EQ(testSet1.size(), trueSet1.size());
-  EXPECT_EQ(testSet2.size(), 0);
+  EXPECT_EQ(testSet2.size(), 0u);
   testSet1.clear();
   trueSet1.clear();
   testSet2.clear();
@@ -116,7 +116,7 @@ TEST(SetSuite, MaxSize) {
 TEST(SetSuite, Clear) {
   s21::Set<int> testSet({50, 45, 1, 30});
   s21::Set<int> trueSet;
-  EXPECT_EQ(testSet.size(), 4);
+  EXPECT_EQ(testSet.size(), 4u);
   testSet.clear();
   EXPECT_EQ(testSet, trueSet);
   testSet.clear();
