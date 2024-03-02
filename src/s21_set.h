@@ -167,14 +167,25 @@ class Set {
         }
     }
 
-    Set(Set &&moveSet);
+    Set(Set &&moveSet) : root_(moveSet.root_), nodeCount_(moveSet.nodeCount_) {
+        moveSet.root_ = nullptr;
+        moveSet.nodeCount_ = 0;
+    }
 
     ~Set() {
         root_ = nullptr;
         nodeCount_ = 0;
     };
 
-    Set& operator=(Set &&s);
+    Set& operator=(Set &&s) {
+        // Set ptr = s;
+        // if (this != s) {
+        //     clear();
+        //     root_ = ptr.root_;
+        //     ptr->root_ = nullptr;
+        // }
+        // return *this;
+    }
 
     bool operator==(const Set &other) const {
         bool ret = true;
@@ -227,7 +238,9 @@ class Set {
         return nodeCount_;
     }
 
-    size_type maxSize();
+    size_type max_size() {
+        // return std::numeric_limits<size_t>::max() / sizeof(value_type);
+    }
 
     void clear() {
         if (root_ != nullptr) {
@@ -276,7 +289,16 @@ class Set {
     }
 
     void erase(iterator pos);
-    void swap(Set& other);
+
+    void swap(Set& other) {
+        Node* temp = this->root_;
+        this->root_ = other.root_;
+        other.root_ = temp;
+        int othNodes = other.nodeCount_;
+        other.nodeCount_ = nodeCount_;
+        nodeCount_ = othNodes;
+    }
+
     void merge(Set& other) {
         for (iterator it = other.begin(); it != other.end(); ++it) {
             insert(it->current_.data_);
