@@ -5,73 +5,55 @@
 // #include <initializer_list>
 // #include <utility>
 
-namespace s21
-{
+namespace s21 {
 
-template<typename Vector>
+template <typename Vector>
 class Iterator {
  public:
   using value_type = typename Vector::value_type;
   using iterator = value_type *;
   using reference = value_type &;
- public:
-  Iterator(iterator ptr) {
-    ptr_ = ptr; 
-  }
 
-  Iterator& operator++() {
+ public:
+  Iterator(iterator ptr) { ptr_ = ptr; }
+
+  Iterator &operator++() {
     ptr_++;
     return *this;
   }
-  
+
   Iterator operator++(int) {
     Iterator iter = *this;
     ++(*this);
     return iter;
   }
 
-  Iterator& operator--() {
+  Iterator &operator--() {
     ptr_--;
     return *this;
   }
-  
+
   Iterator operator--(int) {
     Iterator iter = *this;
     --(*this);
     return iter;
   }
 
-  reference operator[](int index) {
-    return *(ptr_[index]);
-  }
+  reference operator[](int index) { return *(ptr_[index]); }
 
-  iterator operator->() {
-    return ptr_;
-  }
+  iterator operator->() { return ptr_; }
 
-  reference operator*() {
-    return *ptr_;
-  }
+  reference operator*() { return *ptr_; }
 
-  iterator operator+(int value) {
-    return ptr_ + value;
-  }
+  iterator operator+(int value) { return ptr_ + value; }
 
-  iterator operator-(int value) {
-    return ptr_ - value;
-  }
+  iterator operator-(int value) { return ptr_ - value; }
 
-  bool operator==(const Iterator& other) const {
-    return ptr_ == other.ptr_;
-  }
+  bool operator==(const Iterator &other) const { return ptr_ == other.ptr_; }
 
-  bool operator!=(const Iterator& other) const {
-    return ptr_ != other.ptr_;
-  }
+  bool operator!=(const Iterator &other) const { return ptr_ != other.ptr_; }
 
-  iterator get_ptr() {
-    return ptr_;
-  }
+  iterator get_ptr() { return ptr_; }
 
  private:
   iterator ptr_;
@@ -85,7 +67,7 @@ class Vector {
   using const_reference = const T &;
   // using iterator = T *;
   using iterator = Iterator<Vector<value_type>>;
-  // using const_iterator = const T *;
+  using const_iterator = const Iterator<Vector<value_type>>;
   using size_type = size_t;
 
   Vector() {
@@ -145,7 +127,7 @@ class Vector {
     delete[] data_;
   }
 
-  Vector& operator=(Vector &&vector) {
+  Vector &operator=(Vector &&vector) {
     this->~Vector();
     size_ = vector.size_;
     capacity_ = vector.capacity_;
@@ -162,46 +144,28 @@ class Vector {
 
   reference at(size_type index) {
     if (index < 0 || index >= size_) {
-      throw std::out_of_range ("std::out_of_range");
+      throw std::out_of_range("std::out_of_range");
     }
     return data_[index];
   }
 
-  reference operator[](size_type index) {
-    return data_[index];
-  }
+  reference operator[](size_type index) { return data_[index]; }
 
-  const_reference operator[](size_type index) const {
-    return data_[index];
-  }
+  const_reference operator[](size_type index) const { return data_[index]; }
 
-  const_reference front() {
-    return data_[0];
-  }
+  const_reference front() { return data_[0]; }
 
-  const_reference back() {
-    return data_[size_ - 1];
-  }
+  const_reference back() { return data_[size_ - 1]; }
 
-  value_type *data() const {
-    return data_;
-  }
+  value_type *data() const { return data_; }
 
-  iterator begin() {
-    return iterator(data_);
-  }
+  iterator begin() { return iterator(data_); }
 
-  iterator end() {
-    return iterator(data_ + size_);
-  }
+  iterator end() { return iterator(data_ + size_); }
 
-  bool empty() const {
-    return capacity_ > 0 && size_ > 0 ? false : true;
-  }
+  bool empty() const { return capacity_ > 0 && size_ > 0 ? false : true; }
 
-  size_type size() const {
-    return size_;
-  }
+  size_type size() const { return size_; }
 
   size_type max_size() const {
     return std::numeric_limits<size_t>::max() / sizeof(value_type);
@@ -219,14 +183,12 @@ class Vector {
     }
   }
 
-  size_type capacity() const {
-    return capacity_;
-  }
+  size_type capacity() const { return capacity_; }
 
   void shrink_to_fit() {
     if (size_ < capacity_ && data_) {
       value_type *shrink_data_capacity = new value_type[size_];
-      for (size_type element = 0; element < size_ ; element++) {
+      for (size_type element = 0; element < size_; element++) {
         shrink_data_capacity[element] = data_[element];
       }
       delete[] data_;
@@ -242,22 +204,46 @@ class Vector {
       data_ = shrink_data_capacity;
       size_ = 0;
     }
-
   }
 
   iterator insert(iterator pos, const_reference value) {
     int position_difference = this->end().get_ptr() - pos.get_ptr();
     size_++;
     if (size_ >= capacity_) {
-      if (capacity_ == 0) reserve(1);
-      else reserve(capacity_ * 2);
+      if (capacity_ == 0)
+        reserve(1);
+      else
+        reserve(capacity_ * 2);
     }
-    for (iterator iter = this->end(); iter != this->end() - position_difference - 1; iter--) {
+    for (iterator iter = this->end();
+         iter != this->end() - position_difference - 1; iter--) {
       *iter = *(iter - 1);
     }
     pos = this->end() - position_difference - 1;
     *pos = value;
     return pos;
+  }
+
+  template<class... Args>
+  iterator insert_many(iterator pos, Args... vectors) {
+    ([&]
+    {
+      for(int i = 0; i < (int)vectors.size(); i++) {
+        pos = this->insert(pos, vectors[i]);
+        pos++;
+      }
+    } (), ...);
+    return pos;
+  }
+
+  template<class... Args>
+  void insert_many_back(Args... vectors) {
+    ([&]
+    {
+      for(int i = 0; i < (int)vectors.size(); i++) {
+        this->push_back(vectors[i]);
+      }
+    } (), ...);
   }
 
   void erase(iterator pos) {
@@ -269,18 +255,18 @@ class Vector {
 
   void push_back(const value_type value) {
     if (size_ >= capacity_) {
-      if (capacity_ == 0) reserve(1);
-      else reserve(capacity_ * 2);
+      if (capacity_ == 0)
+        reserve(1);
+      else
+        reserve(capacity_ * 2);
     }
     data_[size_] = value;
     size_++;
   }
 
-  void pop_back() {
-    size_--;
-  }
+  void pop_back() { size_--; }
 
-  void swap(Vector& other) {
+  void swap(Vector &other) {
     size_type buff_size = other.size();
     size_type buff_capacity = other.capacity();
     value_type *buff_data = other.data();
@@ -298,9 +284,8 @@ class Vector {
   size_type size_ = 0u;
   size_type capacity_ = 0u;
   value_type *data_ = nullptr;
-
 };
-  
-} // namespace s21
+
+}  // namespace s21
 
 #endif

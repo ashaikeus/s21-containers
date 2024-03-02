@@ -5,8 +5,8 @@ TEST_FLAGS:=-lcheck -lgtest
 export LDFLAGS:="-L/opt/homebrew/lib"
 export CPPFLAGS:="-I/opt/homebrew/include" -lstdc++
 
-SRCS:=$(wildcard s21*.cpp)
-HDRS:=$(wildcard s21*.h)
+SRCS:=$(wildcard s21_v*.cpp)
+HDRS:=$(wildcard s21_v*.h)
 OBJS:=$(SRCS:%.cpp=%.o)
 TEST_SRCS:=$(wildcard test*.cpp)
 
