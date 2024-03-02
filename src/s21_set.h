@@ -44,19 +44,11 @@ class Set {
    private:
     Node* current_;
     Node* successor_;
-    Node* root_;
 
    public:
-    Iterator(Node* node) : current_(node), successor_(nullptr), root_(root_) {}
+    Iterator(Node* node) : current_(node), successor_(nullptr) {}
 
     Iterator operator++() {
-      if (current_ == nullptr) {
-        current_ = root_;
-        if (current_ == nullptr) throw std::underflow_error("Empty tree");
-        while (current_->left_ != nullptr) {
-          current_ = current_->left_;
-        }
-      }
       if (current_->right_ != nullptr) {
         current_ = current_->right_;
         while (current_->left_ != nullptr) {
@@ -93,20 +85,11 @@ class Set {
    private:
     Node* current_;
     Node* successor_;
-    Node* root_;
 
    public:
-    ConstIterator(Node* node)
-        : current_(node), successor_(nullptr), root_(root_) {}
+    ConstIterator(Node* node) : current_(node), successor_(nullptr) {}
 
     ConstIterator operator++() {
-      if (current_ == nullptr) {
-        current_ = root_;
-        if (current_ == nullptr) throw std::underflow_error("Empty tree");
-        while (current_->left_ != nullptr) {
-          current_ = current_->left_;
-        }
-      }
       if (current_->right_ != nullptr) {
         current_ = current_->right_;
         while (current_->left_ != nullptr) {
@@ -264,8 +247,6 @@ class Set {
   }
 
   std::pair<iterator, bool> insert(const value_type& value) {
-    if (nodeCount_ + 1 >= max_size())
-      throw std::range_error("Can't add more elements");
     bool add = true;
     bool makeroot = false;
     Node* newNode = new Node(value);
@@ -369,17 +350,17 @@ class Set {
     return ret;
   }
 
-  // void printAll() const {
-  //     if (!empty()) {
-  //         for (const_iterator it = cbegin(); it.getCurrent() != nullptr && it
-  //         != cend(); ++it) {
-  //             std::cout << *it << " ";
-  //         }
-  //         std::cout << std::endl;
-  //     } else {
-  //         std::cout << "No elements in set" << std::endl;
-  //     }
-  // }
+  void printAll() const {
+    if (!empty()) {
+      for (const_iterator it = cbegin();
+           it.getCurrent() != nullptr && it != cend(); ++it) {
+        std::cout << *it << " ";
+      }
+      std::cout << std::endl;
+    } else {
+      std::cout << "No elements in set" << std::endl;
+    }
+  }
 };
 }  // namespace s21
 

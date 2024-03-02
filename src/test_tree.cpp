@@ -1,10 +1,5 @@
 #include "test.h"
 
-// int main() {
-//   testing::InitGoogleTest();
-//   return RUN_ALL_TESTS();
-// }
-
 TEST(SetSuite, InitFromList) {
   std::set<int> trueSet = {50, 45, 1, 30, 49, 46, 55, 51, 53};
   s21::Set<int> testSet({50, 45, 1, 30, 49, 46, 55, 51, 53});
@@ -156,18 +151,24 @@ TEST(SetSuite, Erase) {
   s21::Set<int> trueSet2;
   s21::Set<int> testSet3({1, 2, 3});
   s21::Set<int> trueSet3({1, 2, 3});
+  s21::Set<int> testSet4({2, 1});
+  s21::Set<int> trueSet4({2});
   testSet1.erase(testSet1.find(30));
   testSet2.erase(testSet2.find(30));
   EXPECT_ANY_THROW(testSet3.erase(testSet3.find(30)));
-  EXPECT_EQ(testSet1.size(), trueSet1.size());
-  EXPECT_EQ(testSet2.size(), trueSet2.size());
-  EXPECT_EQ(testSet3.size(), trueSet3.size());
+  testSet4.erase(testSet4.find(1));
+  EXPECT_EQ(testSet1, trueSet1);
+  EXPECT_EQ(testSet2, trueSet2);
+  EXPECT_EQ(testSet3, trueSet3);
+  EXPECT_EQ(testSet4, trueSet4);
   testSet1.clear();
   testSet2.clear();
   testSet3.clear();
+  testSet4.clear();
   trueSet1.clear();
   trueSet2.clear();
   trueSet3.clear();
+  trueSet4.clear();
 }
 
 TEST(SetSuite, Find) {
