@@ -4,7 +4,7 @@
 #include <iostream>
 
 namespace s21 {
-template <class Key, class T>
+template <class T>
 class Multiset {
  public:
   using key_type = T;
@@ -155,7 +155,8 @@ class Multiset {
     }
   }
 
-  Multiset(Multiset&& moveSet) : root_(moveSet.root_), nodeCount_(moveSet.nodeCount_) {
+  Multiset(Multiset&& moveSet)
+      : root_(moveSet.root_), nodeCount_(moveSet.nodeCount_) {
     moveSet.root_ = nullptr;
     moveSet.nodeCount_ = 0;
   }
@@ -245,13 +246,10 @@ class Multiset {
     nodeCount_ = 0;
   }
 
-  std::pair<iterator, bool> insert(const value_type& value) {
-    bool add = true;
-    bool makeroot = false;
+  iterator insert(const value_type& value) {
     Node* newNode = new Node(value);
     if (root_ == nullptr) {
       root_ = newNode;
-      makeroot = true;
     } else {
       Node* cur = root_;
       bool looking = true;
@@ -273,15 +271,25 @@ class Multiset {
             cur = cur->right_;
           }
         } else {
-          add = false;
-          looking = false;
-          delete newNode;
+          if (cur->left_ == nullptr) {
+            cur->left_ = newNode;
+            newNode->parent_ = cur;
+            looking = false;
+          } else if (cur->right_ == nullptr) {
+            cur->right_ = newNode;
+            newNode->parent_ = cur;
+            looking = false;
+          } else {
+            if (cur->left_ != nullptr)
+              cur = cur->left_;
+            else if (cur->right_ != nullptr)
+              cur = cur->right_;
+          }
         }
       }
     }
-    if (add) nodeCount_++;
-    if (!add && makeroot) root_ = nullptr;
-    return std::make_pair(newNode, add);
+    nodeCount_++;
+    return newNode;
   }
 
   void erase(iterator pos) {
@@ -292,7 +300,9 @@ class Multiset {
       nodeCount_--;
     } else {
       Node* cur = root_;
+      // to here
       while (cur != nullptr) {
+        // to here
         if (pos.getCurrent() == cur->left_) {
           Node* temp = cur->left_;
           cur->left_ = cur->left_->right_;
@@ -349,6 +359,34 @@ class Multiset {
     return ret;
   }
 
+  size_type count(const value_type& key) {
+    size_type count = 0;
+    for (iterator it = begin(); it != end(); ++it) {
+      if (*it == key) count++;
+    }
+    return count;
+  }
+
+  iterator lower_bound(const value_type& key) {
+    iterator it = begin();
+    for (; it != end(); ++it) {
+      if (*it >= key) break;
+    }
+    return it;
+  }
+
+  iterator upper_bound(const value_type& key) {
+    iterator it = begin();
+    for (; it != end(); ++it) {
+      if (*it > key) break;
+    }
+    return it;
+  }
+
+  std::pair<iterator, iterator> equal_range(const value_type& key) {
+    return std::make_pair(lower_bound(key), upper_bound(key));
+  }
+
   void printAll() const {
     if (!empty()) {
       for (const_iterator it = cbegin();
@@ -357,7 +395,7 @@ class Multiset {
       }
       std::cout << std::endl;
     } else {
-      std::cout << "No elements in set" << std::endl;
+      std::cout << "No elements in multiset" << std::endl;
     }
   }
 };
