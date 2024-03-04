@@ -1,10 +1,5 @@
 #include "test.h"
 
-int main() {
-  testing::InitGoogleTest();
-  return RUN_ALL_TESTS();
-}
-
 TEST(MapSuite, InitFromList) {
   std::map<int, std::string> trueMap = {{50, "Elena"},  {45, "Michael"},
                                         {1, "Andrew"},  {30, "Kirill"},
@@ -224,12 +219,12 @@ TEST(MapSuite, Erase) {
       {50, "Elena"}, {49, "Lyubov"}, {46, "Victoria"}};
   s21::Map<int, std::string> trueMap3 = {
       {50, "Elena"}, {49, "Lyubov"}, {46, "Victoria"}};
-  s21::Map<int, std::string> testMap4({{2, "Irina"}, {1, "Arkadiy"}});
+  s21::Map<int, std::string> testMap4({{2, "Irina"}, {3, "Vladimir"}});
   s21::Map<int, std::string> trueMap4({{2, "Irina"}});
   testMap1.erase(testMap1.find(13));
   testMap2.erase(testMap2.find(13));
   EXPECT_ANY_THROW(testMap3.erase(testMap3.find(13)));
-  testMap4.erase(testMap4.find(1));
+  testMap4.erase(testMap4.find(3));
   EXPECT_EQ(testMap1, trueMap1);
   EXPECT_EQ(testMap2, trueMap2);
   EXPECT_EQ(testMap3, trueMap3);

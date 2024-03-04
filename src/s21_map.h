@@ -192,8 +192,9 @@ class Map {
       for (const_iterator it = cbegin(), ot = other.cbegin();
            it != cend() && ot != other.cend() && ret;) {
         if ((it.getCurrent()->key_ != ot.getCurrent()->key_) ||
-            (it.getCurrent()->value_ != ot.getCurrent()->value_))
+            (it.getCurrent()->value_ != ot.getCurrent()->value_)) {
           ret = false;
+        }
         ++it;
         ++ot;
       }
@@ -201,8 +202,9 @@ class Map {
   }
 
   T& at(const Key& key) {
-    if (!contains(key))
+    if (!contains(key)) {
       throw std::out_of_range("Can't find element with given key");
+    }
     auto it = find(key);
     return it.getCurrent()->value_;
   }
