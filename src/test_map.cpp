@@ -81,11 +81,15 @@ TEST(MapSuite, Equal) {
       {45, "Michael"}, {1, "Andrew"}, {30, "Kirill"}};
   s21::Map<int, std::string> testMap3 = {
       {45, "Michael"}, {1, "Andrew"}, {30, "Kirill"}};
+  s21::Map<int, std::string> testMap4 = {
+      {26, "Veronica"}, {210, "Raul"}, {35, "Arcade"}};
   EXPECT_TRUE(testMap2 == testMap3);
   EXPECT_FALSE(testMap1 == testMap3);
+  EXPECT_FALSE(testMap2 == testMap4);
   testMap1.clear();
   testMap2.clear();
   testMap3.clear();
+  testMap4.clear();
 }
 
 TEST(MapSuite, Begin) {
@@ -316,12 +320,12 @@ TEST(MapSuite, Brackets) {
 }
 
 TEST(MapSuite, At) {
-  s21::Map<int, std::string> trueMap = {{50, "Elena"},
+  std::map<int, std::string> trueMap = {{50, "Elena"},
                                         {49, "Lyubov"},
                                         {46, "Victoria"},
                                         {13, "Diana"},
                                         {2, "Irina"}};
-  std::map<int, std::string> testMap = {{50, "Elena"},
+  s21::Map<int, std::string> testMap = {{50, "Elena"},
                                         {49, "Lyubov"},
                                         {46, "Victoria"},
                                         {13, "Diana"},
@@ -347,6 +351,24 @@ TEST(MapSuite, InsertOrAssign) {
   testMap.insert_or_assign(2, "Vladimir");
   testMap.insert_or_assign(2, "Irina");
   EXPECT_EQ(testMap, trueMap);
+  testMap.clear();
+  trueMap.clear();
+}
+
+TEST(MapSuite, Iterator) {
+  std::map<int, std::string> trueMap = {{50, "Elena"},    {49, "Lyubov"},
+                                        {46, "Victoria"}, {13, "Diana"},
+                                        {57, "Lyudmila"}, {55, "Ekaterina"}};
+  s21::Map<int, std::string> testMap = {{50, "Elena"},    {49, "Lyubov"},
+                                        {46, "Victoria"}, {13, "Diana"},
+                                        {57, "Lyudmila"}, {55, "Ekaterina"}};
+  auto it = testMap.find(50);
+  ++it;
+  auto itrue = trueMap.find(50);
+  ++itrue;
+  EXPECT_FALSE(it.getCurrent() == nullptr);
+  EXPECT_EQ(it.getCurrent()->key_, itrue->first);
+  EXPECT_EQ(it.getCurrent()->value_, itrue->second);
   testMap.clear();
   trueMap.clear();
 }
