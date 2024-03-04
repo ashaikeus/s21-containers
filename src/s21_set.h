@@ -350,17 +350,17 @@ class Set {
     return ret;
   }
 
-  void printAll() const {
-    if (!empty()) {
-      for (const_iterator it = cbegin();
-           it.getCurrent() != nullptr && it != cend(); ++it) {
-        std::cout << *it << " ";
-      }
-      std::cout << std::endl;
-    } else {
-      std::cout << "No elements in set" << std::endl;
-    }
-  }
+  // void printAll() const {
+  //   if (!empty()) {
+  //     for (const_iterator it = cbegin();
+  //          it.getCurrent() != nullptr && it != cend(); ++it) {
+  //       std::cout << *it << " ";
+  //     }
+  //     std::cout << std::endl;
+  //   } else {
+  //     std::cout << "No elements in set" << std::endl;
+  //   }
+  // }
 };
 }  // namespace s21
 
