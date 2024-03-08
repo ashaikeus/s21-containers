@@ -19,6 +19,8 @@ TEST(array, standart_constructor) {
 TEST(array, initializer_list_constructor) {
   array<int, 3> true_array_int{2, 3};
   s21::array<int, 3> array_fl{2, 3};
+  s21::array<int, 3> array_fl2 = {2, 3};
+  array_fl2 = array_fl;
 
   EXPECT_EQ(array_fl[0], 2);
   EXPECT_EQ(array_fl[1], 3);
@@ -123,7 +125,10 @@ TEST(array, swap_function) {
   true_array_int.swap(true_array_int2);
   array_int.swap(array_int2);
 
-  EXPECT_EQ(true_array_int[0], array_int[0]);
+  int* j = true_array_int.begin();
+  for (int* i = array_int.begin(); i < array_int.end(); i++, j++) {
+    EXPECT_EQ(*i, *j);
+  }
   EXPECT_EQ(true_array_int2[0], array_int2[0]);
 
   s21::array<string, 4> array_string{"set", "me", "from", "21"};

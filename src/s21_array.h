@@ -42,6 +42,11 @@ class array {
     return arr_[pos];
   }
 
+  array &operator=(const array &a) {
+    std::copy(a.cbegin(), a.cend(), arr_);
+    return *this;
+  }
+
   reference operator[](size_type pos) { return arr_[pos]; }
 
   const_reference front() const { return arr_[0]; }
