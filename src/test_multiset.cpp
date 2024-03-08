@@ -245,6 +245,13 @@ TEST(MultisetSuite, Erase2) {
   testSet7.clear();
   trueSet7.clear();
 
+  s21::Multiset<int> testSet8({50, 55, 56, 54});
+  s21::Multiset<int> trueSet8({50, 56, 54});
+  testSet8.erase(testSet8.find(55));
+  EXPECT_EQ(testSet8, trueSet8);
+  testSet8.clear();
+  trueSet8.clear();
+
   EXPECT_ANY_THROW(testSet6.erase(nullptr));
 }
 

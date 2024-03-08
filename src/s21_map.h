@@ -306,7 +306,7 @@ class Map {
     if (contains(key)) erase(find(key));
     return insert(key, obj);
   }
-  
+
   void erase(iterator pos) {
     if (pos.getCurrent() == nullptr)
       throw std::out_of_range("Can't erase: key not found");
@@ -329,25 +329,22 @@ class Map {
     while (largest->right_) largest = largest->right_;
     pos.getCurrent()->key_ = largest->key_;
     pos.getCurrent()->value_ = largest->value_;
-    if (largest->parent_ == root_) {
+    if (largest->parent_->parent_) {
+      if (largest->parent_->right_ == largest)
+        largest->parent_->right_ = nullptr;
+      else if (largest->parent_->left_ == largest)
+        largest->parent_->left_ = nullptr;
+    } else {
       root_->key_ = largest->key_;
       root_->value_ = largest->value_;
       root_->left_ = largest->left_;
-      if (largest->right_) {
-        largest->right_->parent_ = root_;
-        largest->right_ = nullptr;
-      }
       if (largest->left_) {
         largest->left_->parent_ = root_;
         largest->left_ = nullptr;
       }
-      delete largest;
-      largest = nullptr;
-    } else {
-      largest->parent_->right_ = nullptr;
-      delete largest;
-      largest = nullptr;
     }
+    delete largest;
+    largest = nullptr;
   }
 
   void eraseWithOneChild(iterator pos) {

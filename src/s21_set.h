@@ -303,20 +303,21 @@ class Set {
     Node* largest = pos.getCurrent()->left_;
     while (largest->right_) largest = largest->right_;
     pos.getCurrent()->data_ = largest->data_;
-    if (largest->parent_ == root_) {
+    if (largest->parent_->parent_) {
+      if (largest->parent_->right_ == largest)
+        largest->parent_->right_ = nullptr;
+      else if (largest->parent_->left_ == largest)
+        largest->parent_->left_ = nullptr;
+    } else {
       root_->data_ = largest->data_;
       root_->left_ = largest->left_;
       if (largest->left_) {
         largest->left_->parent_ = root_;
         largest->left_ = nullptr;
       }
-      delete largest;
-      largest = nullptr;
-    } else {
-      largest->parent_->right_ = nullptr;
-      delete largest;
-      largest = nullptr;
     }
+    delete largest;
+    largest = nullptr;
   }
 
   void eraseWithOneChild(iterator pos) {

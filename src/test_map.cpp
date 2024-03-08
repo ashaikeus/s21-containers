@@ -229,6 +229,7 @@ TEST(MapSuite, Erase) {
   testMap2.erase(testMap2.find(13));
   EXPECT_ANY_THROW(testMap3.erase(testMap3.find(13)));
   testMap4.erase(testMap4.find(3));
+  EXPECT_ANY_THROW(testMap3.erase(nullptr));
   EXPECT_EQ(testMap1, trueMap1);
   EXPECT_EQ(testMap2, trueMap2);
   EXPECT_EQ(testMap3, trueMap3);
@@ -241,6 +242,45 @@ TEST(MapSuite, Erase) {
   trueMap2.clear();
   trueMap3.clear();
   trueMap4.clear();
+}
+
+TEST(MapSuite, Erase2) {
+  s21::Map<int, std::string> testMap1 = {
+      {35, "Arcade"}, {234, "Raul"},    {209, "Rex"}, {202, "Lily"},
+      {37, "Cass"},   {27, "Veronica"}, {26, "Craig"}};
+  s21::Map<int, std::string> trueMap1 = {{209, "Rex"}, {26, "Craig"}};
+  testMap1.erase(testMap1.find(35));
+  testMap1.erase(testMap1.find(234));
+  testMap1.erase(testMap1.find(27));
+  testMap1.erase(testMap1.find(202));
+  testMap1.erase(testMap1.find(37));
+  testMap1.clear();
+  trueMap1.clear();
+
+  s21::Map<int, std::string> testMap2 = {
+      {50, "Elena"}, {55, "Mikhail"}, {56, "Svetoslava"}};
+  s21::Map<int, std::string> trueMap2 = {{55, "Mikhail"}, {56, "Svetoslava"}};
+  testMap2.erase(testMap2.find(50));
+  EXPECT_EQ(testMap2, trueMap2);
+  testMap2.clear();
+  trueMap2.clear();
+
+  s21::Map<int, std::string> testMap3 = {
+      {50, "Elena"}, {55, "Mikhail"}, {56, "Svetoslava"}, {54, "Dmitriy"}};
+  s21::Map<int, std::string> trueMap3 = {
+      {50, "Elena"}, {56, "Svetoslava"}, {54, "Dmitriy"}};
+  testMap3.erase(testMap3.find(55));
+  EXPECT_EQ(testMap3, trueMap3);
+  testMap3.clear();
+  trueMap3.clear();
+
+  s21::Map<int, std::string> testMap7 = {
+      {50, "Elena"}, {55, "Mikhail"}, {56, "Svetoslava"}};
+  s21::Map<int, std::string> trueMap7 = {{50, "Elena"}, {56, "Svetoslava"}};
+  testMap7.erase(testMap7.find(55));
+  EXPECT_EQ(testMap7, trueMap7);
+  testMap7.clear();
+  trueMap7.clear();
 }
 
 TEST(MapSuite, Find) {

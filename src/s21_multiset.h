@@ -307,7 +307,10 @@ class Multiset {
     while (largest->right_) largest = largest->right_;
     pos.getCurrent()->data_ = largest->data_;
     if (largest->parent_->parent_) {
-      largest->parent_->right_ = nullptr;
+      if (largest->parent_->right_ == largest)
+        largest->parent_->right_ = nullptr;
+      else if (largest->parent_->left_ == largest)
+        largest->parent_->left_ = nullptr;
     } else {
       root_->data_ = largest->data_;
       root_->left_ = largest->left_;
