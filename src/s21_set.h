@@ -23,11 +23,11 @@ class Set {
 
     Node(const value_type data) : data_(data){};
     ~Node() {
-      if (left_ != nullptr) {
+      if (left_) {
         delete left_;
         left_ = nullptr;
       }
-      if (right_ != nullptr) {
+      if (right_) {
         delete right_;
         right_ = nullptr;
       }
@@ -49,15 +49,14 @@ class Set {
     Iterator(Node* node) : current_(node), successor_(nullptr) {}
 
     Iterator operator++() {
-      if (current_->right_ != nullptr) {
+      if (current_->right_) {
         current_ = current_->right_;
-        while (current_->left_ != nullptr) {
+        while (current_->left_) {
           current_ = current_->left_;
         }
       } else {
         successor_ = current_->parent_;
-        while (current_->parent_ != nullptr &&
-               current_ == current_->parent_->right_) {
+        while (current_->parent_ && current_ == current_->parent_->right_) {
           current_ = successor_;
           successor_ = successor_->parent_;
         }
@@ -90,15 +89,14 @@ class Set {
     ConstIterator(Node* node) : current_(node), successor_(nullptr) {}
 
     ConstIterator operator++() {
-      if (current_->right_ != nullptr) {
+      if (current_->right_) {
         current_ = current_->right_;
-        while (current_->left_ != nullptr) {
+        while (current_->left_) {
           current_ = current_->left_;
         }
       } else {
         successor_ = current_->parent_;
-        while (current_->parent_ != nullptr &&
-               current_ == current_->parent_->right_) {
+        while (current_->parent_ && current_ == current_->parent_->right_) {
           current_ = successor_;
           successor_ = successor_->parent_;
         }
@@ -134,7 +132,7 @@ class Set {
   }
 
   Set(const Set& copySet) : root_(nullptr), nodeCount_(0) {
-    if (copySet.root_ != nullptr) {
+    if (copySet.root_) {
       root_ = new Node(copySet.root_->data_);
       nodeCount_++;
       copyNodes(copySet.root_, root_);
@@ -142,13 +140,13 @@ class Set {
   }
 
   void copyNodes(Node* source, Node* destination) {
-    if (source->left_ != nullptr) {
+    if (source->left_) {
       destination->left_ = new Node(source->left_->data_);
       destination->left_->parent_ = destination;
       nodeCount_++;
       copyNodes(source->left_, destination->left_);
     }
-    if (source->right_ != nullptr) {
+    if (source->right_) {
       destination->right_ = new Node(source->right_->data_);
       destination->right_->parent_ = destination;
       nodeCount_++;
@@ -162,6 +160,7 @@ class Set {
   }
 
   ~Set() {
+    delete root_;
     root_ = nullptr;
     nodeCount_ = 0;
   };
@@ -192,7 +191,7 @@ class Set {
 
   iterator begin() {
     Node* cur = root_;
-    if (cur != nullptr)
+    if (cur)
       while (cur->left_) {
         cur = cur->left_;
       }
@@ -201,7 +200,7 @@ class Set {
 
   const_iterator cbegin() const {
     Node* cur = root_;
-    if (cur != nullptr)
+    if (cur)
       while (cur->left_) {
         cur = cur->left_;
       }
@@ -210,7 +209,7 @@ class Set {
 
   iterator end() const {
     Node* cur = root_;
-    if (cur != nullptr) {
+    if (cur) {
       while (cur->right_) {
         cur = cur->right_;
       }
@@ -221,7 +220,7 @@ class Set {
 
   const_iterator cend() const {
     Node* cur = root_;
-    if (cur != nullptr) {
+    if (cur) {
       while (cur->right_) {
         cur = cur->right_;
       }
@@ -239,10 +238,8 @@ class Set {
   }
 
   void clear() {
-    if (root_ != nullptr) {
-      delete root_;
-      root_ = nullptr;
-    }
+    delete root_;
+    root_ = nullptr;
     nodeCount_ = 0;
   }
 
@@ -286,29 +283,84 @@ class Set {
   }
 
   void erase(iterator pos) {
-    if (pos.getCurrent() == root_) {
-      Node* temp = root_;
-      root_ = root_->left_;
-      delete temp;
-      nodeCount_--;
-    } else {
-      Node* cur = root_;
-      while (cur != nullptr) {
-        if (pos.getCurrent() == cur->left_) {
-          Node* temp = cur->left_;
-          cur->left_ = cur->left_->right_;
-          delete temp;
-          nodeCount_--;
-          break;
-        } else if (pos.getCurrent() == cur->right_) {
-          Node* temp = cur->right_;
-          cur->right_ = cur->right_->left_;
-          delete temp;
-          nodeCount_--;
-          break;
-        }
-        cur = cur->left_;
+    if (pos.getCurrent() == nullptr)
+      throw std::out_of_range("Can't erase: key not found");
+    if (pos.getCurrent()->left_ && pos.getCurrent()->right_) {  // both
+      eraseWithTwoChildren(pos);
+    } else if (pos.getCurrent()->left_ ||
+               pos.getCurrent()->right_) {  // only one
+      eraseWithOneChild(pos);
+    } else {  // no children
+      eraseWithNoChildren(pos);
+    }
+    --nodeCount_;
+  }
+
+  void eraseWithTwoChildren(iterator pos) {
+    // find largest node in the left subtree,
+    // exchange values, delete old node
+    Node* parent = pos.getCurrent()->parent_;
+    Node* largest = pos.getCurrent()->left_;
+    while (largest->right_) largest = largest->right_;
+    pos.getCurrent()->data_ = largest->data_;
+    if (largest->parent_ == root_) {
+      root_->data_ = largest->data_;
+      root_->left_ = largest->left_;
+      if (largest->right_) {
+        largest->right_->parent_ = root_;
+        largest->right_ = nullptr;
       }
+      if (largest->left_) {
+        largest->left_->parent_ = root_;
+        largest->left_ = nullptr;
+      }
+      delete largest;
+      largest = nullptr;
+    } else {
+      largest->parent_->right_ = nullptr;
+      delete largest;
+      largest = nullptr;
+    }
+  }
+
+  void eraseWithOneChild(iterator pos) {
+    // parent now points at this child as its own
+    Node* parent = pos.getCurrent()->parent_;
+    Node* child = (pos.getCurrent()->left_) ? pos.getCurrent()->left_
+                                            : pos.getCurrent()->right_;
+    if (parent) {
+      if (parent->left_ == pos.getCurrent()) {
+        delete pos.getCurrent();
+        parent->left_ = nullptr;
+        parent->left_ = child;
+      } else if (parent->right_ == pos.getCurrent()) {
+        delete pos.getCurrent();
+        parent->right_ = nullptr;
+        parent->right_ = child;
+      }
+    } else {
+      root_->data_ = child->data_;
+      root_->left_ = child->left_;
+      root_->right_ = child->right_;
+      delete child;
+      child = nullptr;
+    }
+  }
+
+  void eraseWithNoChildren(iterator pos) {
+    // delete the node
+    Node* parent = pos.getCurrent()->parent_;
+    if (parent) {
+      if (parent->left_ == pos.getCurrent()) {
+        delete pos.getCurrent();
+        parent->left_ = nullptr;
+      } else if (parent->right_ == pos.getCurrent()) {
+        delete pos.getCurrent();
+        parent->right_ = nullptr;
+      }
+    } else {
+      delete root_;
+      root_ = nullptr;
     }
   }
 
@@ -350,17 +402,17 @@ class Set {
     return ret;
   }
 
-  // void printAll() const {
-  //   if (!empty()) {
-  //     for (const_iterator it = cbegin();
-  //          it.getCurrent() != nullptr && it != cend(); ++it) {
-  //       std::cout << *it << " ";
-  //     }
-  //     std::cout << std::endl;
-  //   } else {
-  //     std::cout << "No elements in set" << std::endl;
-  //   }
-  // }
+  void printAll() const {
+    if (!empty()) {
+      for (const_iterator it = cbegin();
+           it.getCurrent() && it != cend(); ++it) {
+        std::cout << *it << " ";
+      }
+      std::cout << std::endl;
+    } else {
+      std::cout << "No elements in set" << std::endl;
+    }
+  }
 };
 }  // namespace s21
 
