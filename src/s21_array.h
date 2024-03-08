@@ -1,7 +1,7 @@
 #ifndef SRC_S21_ARRAY_H_
 #define SRC_S21_ARRAY_H_
 
-#include "s21_containers.h"
+#include "s21_containersplus.h"
 
 namespace s21 {
 
@@ -59,7 +59,7 @@ class array {
   size_type size() const { return N; }
   size_type max_size() const { return N; }
 
-  void swap(array &other) { std::swap(arr_, other.array_); }
+  void swap(array &other) { std::swap(arr_, other.arr_); }
   void fill(const_reference value) { init_array(0, N, value); }
 
  private:
@@ -69,6 +69,45 @@ class array {
                   const_reference value) {
     for (size_type i = start_index; i < end_index; ++i) arr_[i] = value;
   }
+};
+
+template <typename T>
+class array<T, 0> {
+ public:
+  using value_type = T;
+  using reference = T &;
+  using const_reference = const T &;
+  using iterator = T *;
+  using const_iterator = const T *;
+  using size_type = size_t;
+
+  //   reference operator[](size_type) {
+  //     throw std::out_of_range("Index out of array range");
+  //   }
+
+  reference at(size_type) {
+    throw std::out_of_range("Index out of array range");
+  }
+
+  const_reference front() const { return *static_cast<T *>(nullptr); }
+
+  const_reference back() const { return *static_cast<T *>(nullptr); }
+
+  iterator data() noexcept { return nullptr; }
+
+  iterator begin() noexcept { return nullptr; }
+
+  iterator end() noexcept { return nullptr; }
+
+  size_type size() const noexcept { return 0; }
+
+  size_type max_size() const noexcept { return 0; }
+
+  bool empty() const noexcept { return true; }
+
+  void swap(array &) noexcept {}
+
+  void fill(const_reference) {}
 };
 }  // namespace s21
 #endif  // SRC_S21_ARRAY_H_
