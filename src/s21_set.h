@@ -329,21 +329,20 @@ class Set {
     Node* child = (pos.getCurrent()->left_) ? pos.getCurrent()->left_
                                             : pos.getCurrent()->right_;
     if (parent) {
-      if (parent->left_ == pos.getCurrent()) {
-        delete pos.getCurrent();
-        parent->left_ = nullptr;
+      if (parent->left_ == pos.getCurrent())
         parent->left_ = child;
-      } else if (parent->right_ == pos.getCurrent()) {
-        delete pos.getCurrent();
-        parent->right_ = nullptr;
+      else if (parent->right_ == pos.getCurrent())
         parent->right_ = child;
-      }
+      child->parent_ = parent;
+      pos.getCurrent()->left_ = nullptr;
+      pos.getCurrent()->right_ = nullptr;
+      delete pos.getCurrent();
     } else {
-      root_->data_ = child->data_;
-      root_->left_ = child->left_;
-      root_->right_ = child->right_;
-      delete child;
-      child = nullptr;
+      root_->left_ = nullptr;
+      root_->right_ = nullptr;
+      delete root_;
+      root_ = child;
+      root_->parent_ = nullptr;
     }
   }
 
@@ -404,8 +403,8 @@ class Set {
 
   void printAll() const {
     if (!empty()) {
-      for (const_iterator it = cbegin();
-           it.getCurrent() && it != cend(); ++it) {
+      for (const_iterator it = cbegin(); it.getCurrent() && it != cend();
+           ++it) {
         std::cout << *it << " ";
       }
       std::cout << std::endl;
