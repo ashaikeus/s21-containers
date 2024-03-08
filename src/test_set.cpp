@@ -228,6 +228,15 @@ TEST(SetSuite, Erase2) {
   EXPECT_EQ(testSet6, trueSet6);
   testSet6.clear();
   trueSet6.clear();
+
+  s21::Set<int> testSet7({50, 55, 56});
+  s21::Set<int> trueSet7({50, 56});
+  testSet7.erase(testSet7.find(55));
+  EXPECT_EQ(testSet7, trueSet7);
+  testSet7.clear();
+  trueSet7.clear();
+
+  EXPECT_ANY_THROW(testSet6.erase(nullptr));
 }
 
 TEST(SetSuite, Find) {

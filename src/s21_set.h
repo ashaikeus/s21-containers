@@ -306,10 +306,6 @@ class Set {
     if (largest->parent_ == root_) {
       root_->data_ = largest->data_;
       root_->left_ = largest->left_;
-      if (largest->right_) {
-        largest->right_->parent_ = root_;
-        largest->right_ = nullptr;
-      }
       if (largest->left_) {
         largest->left_->parent_ = root_;
         largest->left_ = nullptr;
