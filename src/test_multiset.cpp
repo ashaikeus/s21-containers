@@ -1,10 +1,5 @@
 #include "test.h"
 
-int main() {
-  testing::InitGoogleTest();
-  return RUN_ALL_TESTS();
-}
-
 TEST(MultisetSuite, InitFromList) {
   std::multiset<int> trueMultiset = {50, 45, 1, 30, 49, 46, 55, 51, 53, 53};
   s21::Multiset<int> testMultiset = {50, 45, 1, 30, 49, 46, 55, 51, 53, 53};
