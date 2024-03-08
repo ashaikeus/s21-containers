@@ -16,8 +16,11 @@ TEST(MultisetSuite, InitAssign) {
   std::multiset<int> trueMultiset = {50, 45, 1, 30, 49, 46, 55, 51, 53, 53};
   s21::Multiset<int> testMultiset =
       s21::Multiset({50, 45, 1, 30, 49, 46, 55, 51, 53, 53});
+  s21::Multiset<int> testMultiset2 = testMultiset;
   EXPECT_EQ(testMultiset.size(), trueMultiset.size());
+  EXPECT_EQ(testMultiset2.size(), trueMultiset.size());
   testMultiset.clear();
+  testMultiset2.clear();
 }
 
 TEST(MultisetSuite, InitCopy) {
@@ -133,8 +136,10 @@ TEST(MultisetSuite, Clear) {
 }
 
 TEST(MultisetSuite, Insert) {
-  s21::Multiset<int> testMultiset1({50, 45, 1});
-  s21::Multiset<int> trueMultiset1({50, 45, 1, 30});
+  s21::Multiset<int> testMultiset1(
+      {50, 45, 1, 2, 2, 1, 1, 1, 3, 4, 4, 5, 6, 3, 5, 6});
+  s21::Multiset<int> trueMultiset1(
+      {50, 45, 1, 2, 2, 1, 1, 1, 3, 4, 4, 5, 6, 3, 5, 6, 30});
   s21::Multiset<int> testMultiset2;
   s21::Multiset<int> trueMultiset2({30});
   s21::Multiset<int> testMultiset3({30});
@@ -154,38 +159,98 @@ TEST(MultisetSuite, Insert) {
 }
 
 TEST(MultisetSuite, Erase) {
-  s21::Multiset<int> testMultiset1({50, 45, 1, 30});
-  s21::Multiset<int> trueMultiset1({50, 45, 1});
-  s21::Multiset<int> testMultiset2({30});
-  s21::Multiset<int> trueMultiset2;
-  s21::Multiset<int> testMultiset3({1, 2, 3});
-  s21::Multiset<int> trueMultiset3({1, 2, 3});
-  s21::Multiset<int> testMultiset4({2, 1});
-  s21::Multiset<int> trueMultiset4({2});
-  s21::Multiset<int> testMultiset5({2, 1, 2, 2, 1, 2, 2});
-  s21::Multiset<int> trueMultiset5({1, 2, 2, 1, 2, 2});
-  testMultiset1.erase(testMultiset1.find(30));
-  testMultiset2.erase(testMultiset2.find(30));
-  EXPECT_ANY_THROW(testMultiset3.erase(testMultiset3.find(30)));
-  testMultiset4.erase(testMultiset4.find(1));
-  testMultiset5.erase(testMultiset5.find(2));
-  EXPECT_EQ(testMultiset1, trueMultiset1);
-  EXPECT_EQ(testMultiset2, trueMultiset2);
-  EXPECT_EQ(testMultiset3, trueMultiset3);
-  EXPECT_EQ(testMultiset4, trueMultiset4);
-  testMultiset5.printAll();
-  trueMultiset5.printAll();
-  EXPECT_EQ(testMultiset5, trueMultiset5);
-  testMultiset1.clear();
-  testMultiset2.clear();
-  testMultiset3.clear();
-  testMultiset4.clear();
-  trueMultiset5.clear();
-  trueMultiset1.clear();
-  trueMultiset2.clear();
-  trueMultiset3.clear();
-  trueMultiset4.clear();
-  trueMultiset5.clear();
+  // delete root with 2, root with 1, root with 0
+  //        normal with 2, normal with 1, leaf
+
+  s21::Multiset<int> testSet1({50, 55, 45, 1, 30});  // root with 2
+  s21::Multiset<int> trueSet1({55, 45, 1, 30});
+  testSet1.erase(testSet1.find(50));
+  EXPECT_EQ(testSet1, trueSet1);
+  testSet1.clear();
+  trueSet1.clear();
+
+  s21::Multiset<int> testSet2({50, 45, 1, 30});  // root with 1
+  s21::Multiset<int> trueSet2({45, 1, 30});
+  testSet2.erase(testSet2.find(50));
+  EXPECT_EQ(testSet2, trueSet2);
+  testSet2.clear();
+  trueSet2.clear();
+
+  s21::Multiset<int> testSet3({50});  // root with 0
+  s21::Multiset<int> trueSet3;
+  testSet3.erase(testSet3.find(50));
+  EXPECT_EQ(testSet3, trueSet3);
+  testSet3.clear();
+  trueSet3.clear();
+
+  s21::Multiset<int> testSet4({50, 55, 45, 1, 30, 46});  // normal with 2
+  s21::Multiset<int> trueSet4({50, 55, 1, 30, 46});
+  testSet4.erase(testSet4.find(45));
+  EXPECT_EQ(testSet4, trueSet4);
+  testSet4.clear();
+  trueSet4.clear();
+
+  s21::Multiset<int> testSet5({50, 55, 45, 1, 30, 46});  // normal with 1
+  s21::Multiset<int> trueSet5({50, 55, 45, 30, 46});
+  testSet5.erase(testSet5.find(1));
+  EXPECT_EQ(testSet5, trueSet5);
+  testSet5.clear();
+  trueSet5.clear();
+
+  s21::Multiset<int> testSet6({50, 55, 45, 1, 30, 46});  // normal with 0
+  s21::Multiset<int> trueSet6({50, 55, 45, 1, 46});
+  testSet6.erase(testSet6.find(30));
+  EXPECT_EQ(testSet6, trueSet6);
+  testSet6.clear();
+  trueSet6.clear();
+}
+
+TEST(MultisetSuite, Erase2) {
+  // delete dup root with 2
+  //        dup normal with 2, dup normal with 1
+  s21::Multiset<int> testSet1({50, 55, 50, 45, 1, 30});  // dup root with 2
+  s21::Multiset<int> trueSet1({55, 50, 45, 1, 30});
+  testSet1.erase(testSet1.find(50));
+  EXPECT_EQ(testSet1, trueSet1);
+  testSet1.clear();
+  trueSet1.clear();
+
+  s21::Multiset<int> testSet4(
+      {50, 55, 45, 1, 45, 30, 46});  // dup normal with 2
+  s21::Multiset<int> trueSet4({50, 55, 1, 45, 30, 46});
+  testSet4.erase(testSet4.find(45));
+  EXPECT_EQ(testSet4, trueSet4);
+  testSet4.clear();
+  trueSet4.clear();
+
+  s21::Multiset<int> testSet5({50, 55, 45, 1, 30, 1, 46});  // dup normal with 1
+  s21::Multiset<int> trueSet5;
+  testSet5.erase(testSet5.find(1));
+  testSet5.erase(testSet5.find(50));
+  testSet5.erase(testSet5.find(55));
+  testSet5.erase(testSet5.find(45));
+  testSet5.erase(testSet5.find(30));
+  testSet5.erase(testSet5.find(1));
+  testSet5.erase(testSet5.find(46));
+  EXPECT_EQ(testSet5, trueSet5);
+  testSet5.clear();
+  trueSet5.clear();
+
+  s21::Multiset<int> testSet6({50, 55, 45, 46});
+  s21::Multiset<int> trueSet6({50, 55, 46});
+  testSet6.erase(testSet6.find(45));
+  EXPECT_EQ(testSet6, trueSet6);
+  testSet6.clear();
+  trueSet6.clear();
+
+  s21::Multiset<int> testSet7({50, 55, 56});
+  s21::Multiset<int> trueSet7({50, 56});
+  testSet7.erase(testSet7.find(55));
+  EXPECT_EQ(testSet7, trueSet7);
+  testSet7.clear();
+  trueSet7.clear();
+
+  EXPECT_ANY_THROW(testSet6.erase(nullptr));
 }
 
 TEST(MultisetSuite, Find) {

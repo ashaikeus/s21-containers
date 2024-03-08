@@ -306,31 +306,87 @@ class Map {
     if (contains(key)) erase(find(key));
     return insert(key, obj);
   }
-
+  
   void erase(iterator pos) {
-    if (pos.getCurrent() == root_) {
-      Node* temp = root_;
-      root_ = root_->left_;
-      delete temp;
-      nodeCount_--;
-    } else {
-      Node* cur = root_;
-      while (cur != nullptr) {
-        if (pos.getCurrent() == cur->left_) {
-          Node* temp = cur->left_;
-          cur->left_ = cur->left_->right_;
-          delete temp;
-          nodeCount_--;
-          break;
-        } else if (pos.getCurrent() == cur->right_) {
-          Node* temp = cur->right_;
-          cur->right_ = cur->right_->left_;
-          delete temp;
-          nodeCount_--;
-          break;
-        }
-        cur = cur->left_;
+    if (pos.getCurrent() == nullptr)
+      throw std::out_of_range("Can't erase: key not found");
+    if (pos.getCurrent()->left_ && pos.getCurrent()->right_) {  // both
+      eraseWithTwoChildren(pos);
+    } else if (pos.getCurrent()->left_ ||
+               pos.getCurrent()->right_) {  // only one
+      eraseWithOneChild(pos);
+    } else {  // no children
+      eraseWithNoChildren(pos);
+    }
+    --nodeCount_;
+  }
+
+  void eraseWithTwoChildren(iterator pos) {
+    // find largest node in the left subtree,
+    // exchange values, delete old node
+    Node* parent = pos.getCurrent()->parent_;
+    Node* largest = pos.getCurrent()->left_;
+    while (largest->right_) largest = largest->right_;
+    pos.getCurrent()->key_ = largest->key_;
+    pos.getCurrent()->value_ = largest->value_;
+    if (largest->parent_ == root_) {
+      root_->key_ = largest->key_;
+      root_->value_ = largest->value_;
+      root_->left_ = largest->left_;
+      if (largest->right_) {
+        largest->right_->parent_ = root_;
+        largest->right_ = nullptr;
       }
+      if (largest->left_) {
+        largest->left_->parent_ = root_;
+        largest->left_ = nullptr;
+      }
+      delete largest;
+      largest = nullptr;
+    } else {
+      largest->parent_->right_ = nullptr;
+      delete largest;
+      largest = nullptr;
+    }
+  }
+
+  void eraseWithOneChild(iterator pos) {
+    // parent now points at this child as its own
+    Node* parent = pos.getCurrent()->parent_;
+    Node* child = (pos.getCurrent()->left_) ? pos.getCurrent()->left_
+                                            : pos.getCurrent()->right_;
+    if (parent) {
+      if (parent->left_ == pos.getCurrent())
+        parent->left_ = child;
+      else if (parent->right_ == pos.getCurrent())
+        parent->right_ = child;
+      child->parent_ = parent;
+      pos.getCurrent()->left_ = nullptr;
+      pos.getCurrent()->right_ = nullptr;
+      delete pos.getCurrent();
+    } else {
+      root_->left_ = nullptr;
+      root_->right_ = nullptr;
+      delete root_;
+      root_ = child;
+      root_->parent_ = nullptr;
+    }
+  }
+
+  void eraseWithNoChildren(iterator pos) {
+    // delete the node
+    Node* parent = pos.getCurrent()->parent_;
+    if (parent) {
+      if (parent->left_ == pos.getCurrent()) {
+        delete pos.getCurrent();
+        parent->left_ = nullptr;
+      } else if (parent->right_ == pos.getCurrent()) {
+        delete pos.getCurrent();
+        parent->right_ = nullptr;
+      }
+    } else {
+      delete root_;
+      root_ = nullptr;
     }
   }
 

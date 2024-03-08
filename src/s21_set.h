@@ -163,7 +163,7 @@ class Set {
     delete root_;
     root_ = nullptr;
     nodeCount_ = 0;
-  };
+  }
 
   Set& operator=(Set&& s) {
     Set ptr = s;

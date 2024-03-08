@@ -271,19 +271,12 @@ class Multiset {
             cur = cur->right_;
           }
         } else {
-          if (cur->left_ == nullptr) {
-            cur->left_ = newNode;
-            newNode->parent_ = cur;
-            looking = false;
-          } else if (cur->right_ == nullptr) {
+          if (cur->right_ == nullptr) {
             cur->right_ = newNode;
             newNode->parent_ = cur;
             looking = false;
-          } else {
-            if (cur->left_ != nullptr)
-              cur = cur->left_;
-            else if (cur->right_ != nullptr)
-              cur = cur->right_;
+          } else if (cur->right_ != nullptr) {
+            cur = cur->right_;
           }
         }
       }
@@ -293,31 +286,77 @@ class Multiset {
   }
 
   void erase(iterator pos) {
-    if (pos.getCurrent() == root_) {
-      Node* temp = root_;
-      root_ = root_->left_;
-      delete temp;
-      nodeCount_--;
+    if (pos.getCurrent() == nullptr)
+      throw std::out_of_range("Can't erase: key not found");
+    if (pos.getCurrent()->left_ && pos.getCurrent()->right_) {  // both
+      eraseWithTwoChildren(pos);
+    } else if (pos.getCurrent()->left_ ||
+               pos.getCurrent()->right_) {  // only one
+      eraseWithOneChild(pos);
+    } else {  // no children
+      eraseWithNoChildren(pos);
+    }
+    --nodeCount_;
+  }
+
+  void eraseWithTwoChildren(iterator pos) {
+    // find largest node in the left subtree,
+    // exchange values, delete old node
+    Node* parent = pos.getCurrent()->parent_;
+    Node* largest = pos.getCurrent()->left_;
+    while (largest->right_) largest = largest->right_;
+    pos.getCurrent()->data_ = largest->data_;
+    if (largest->parent_->parent_) {
+      largest->parent_->right_ = nullptr;
     } else {
-      Node* cur = root_;
-      // to here
-      while (cur != nullptr) {
-        // to here
-        if (pos.getCurrent() == cur->left_) {
-          Node* temp = cur->left_;
-          cur->left_ = cur->left_->right_;
-          delete temp;
-          nodeCount_--;
-          break;
-        } else if (pos.getCurrent() == cur->right_) {
-          Node* temp = cur->right_;
-          cur->right_ = cur->right_->left_;
-          delete temp;
-          nodeCount_--;
-          break;
-        }
-        cur = cur->left_;
+      root_->data_ = largest->data_;
+      root_->left_ = largest->left_;
+      if (largest->left_) {
+        largest->left_->parent_ = root_;
+        largest->left_ = nullptr;
       }
+    }
+    delete largest;
+    largest = nullptr;
+  }
+
+  void eraseWithOneChild(iterator pos) {
+    // parent now points at this child as its own
+    Node* parent = pos.getCurrent()->parent_;
+    Node* child = (pos.getCurrent()->left_) ? pos.getCurrent()->left_
+                                            : pos.getCurrent()->right_;
+    if (parent) {
+      if (parent->left_ == pos.getCurrent())
+        parent->left_ = child;
+      else if (parent->right_ == pos.getCurrent())
+        parent->right_ = child;
+      child->parent_ = parent;
+      pos.getCurrent()->left_ = nullptr;
+      pos.getCurrent()->right_ = nullptr;
+      delete pos.getCurrent();
+    } else {
+      root_->left_ = nullptr;
+      root_->right_ = nullptr;
+      delete root_;
+      root_ = child;
+      root_->parent_ = nullptr;
+    }
+  }
+
+  void eraseWithNoChildren(iterator pos) {
+    // delete the node
+    Node* parent = pos.getCurrent()->parent_;
+    if (parent) {
+      if (parent->left_ == pos.getCurrent()) {
+        delete pos.getCurrent();
+        parent->left_ = nullptr;
+      } else if (parent->right_ == pos.getCurrent()) {
+        delete pos.getCurrent();
+        parent->right_ = nullptr;
+      }
+    } else {
+      delete root_;
+      root_ = nullptr;
     }
   }
 
@@ -387,17 +426,17 @@ class Multiset {
     return std::make_pair(lower_bound(key), upper_bound(key));
   }
 
-  void printAll() const {
-    if (!empty()) {
-      for (const_iterator it = cbegin();
-           it.getCurrent() != nullptr && it != cend(); ++it) {
-        std::cout << *it << " ";
-      }
-      std::cout << std::endl;
-    } else {
-      std::cout << "No elements in multiset" << std::endl;
-    }
-  }
+  // void printAll() const {
+  //   if (!empty()) {
+  //     for (const_iterator it = cbegin();
+  //          it.getCurrent() != nullptr && it != cend(); ++it) {
+  //       std::cout << *it << " ";
+  //     }
+  //     std::cout << std::endl;
+  //   } else {
+  //     std::cout << "No elements in multiset" << std::endl;
+  //   }
+  // }
 };
 }  // namespace s21
 

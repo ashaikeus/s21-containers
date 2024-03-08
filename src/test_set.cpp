@@ -153,22 +153,81 @@ TEST(SetSuite, Erase) {
   s21::Set<int> trueSet3({1, 2, 3});
   s21::Set<int> testSet4({2, 1});
   s21::Set<int> trueSet4({2});
+  s21::Set<int> testSet5({2, 1, 3, 4, 8, 9});
+  s21::Set<int> trueSet5;
   testSet1.erase(testSet1.find(30));
   testSet2.erase(testSet2.find(30));
   EXPECT_ANY_THROW(testSet3.erase(testSet3.find(30)));
   testSet4.erase(testSet4.find(1));
+  testSet5.erase(testSet5.find(1));
+  testSet5.erase(testSet5.find(2));
+  testSet5.erase(testSet5.find(3));
+  testSet5.erase(testSet5.find(4));
+  testSet5.erase(testSet5.find(8));
+  testSet5.erase(testSet5.find(9));
+  EXPECT_ANY_THROW(testSet5.erase(testSet5.find(9)));
   EXPECT_EQ(testSet1, trueSet1);
   EXPECT_EQ(testSet2, trueSet2);
   EXPECT_EQ(testSet3, trueSet3);
   EXPECT_EQ(testSet4, trueSet4);
+  EXPECT_EQ(testSet5, trueSet5);
   testSet1.clear();
   testSet2.clear();
   testSet3.clear();
   testSet4.clear();
+  testSet5.clear();
   trueSet1.clear();
   trueSet2.clear();
   trueSet3.clear();
   trueSet4.clear();
+  trueSet5.clear();
+}
+
+TEST(SetSuite, Erase2) {
+  // delete root with 2, root with 1, root with 0
+  //        normal with 2, normal with 1, leaf
+
+  s21::Set<int> testSet1({50, 55, 45, 1, 30});  // root with 2
+  s21::Set<int> trueSet1({55, 45, 1, 30});
+  testSet1.erase(testSet1.find(50));
+  EXPECT_EQ(testSet1, trueSet1);
+  testSet1.clear();
+  trueSet1.clear();
+
+  s21::Set<int> testSet2({50, 45, 1, 30});  // root with 1
+  s21::Set<int> trueSet2({45, 1, 30});
+  testSet2.erase(testSet2.find(50));
+  EXPECT_EQ(testSet2, trueSet2);
+  testSet2.clear();
+  trueSet2.clear();
+
+  s21::Set<int> testSet3({50});  // root with 0
+  s21::Set<int> trueSet3;
+  testSet3.erase(testSet3.find(50));
+  EXPECT_EQ(testSet3, trueSet3);
+  testSet3.clear();
+  trueSet3.clear();
+
+  s21::Set<int> testSet4({50, 55, 45, 1, 30, 46});  // normal with 2
+  s21::Set<int> trueSet4({50, 55, 1, 30, 46});
+  testSet4.erase(testSet4.find(45));
+  EXPECT_EQ(testSet4, trueSet4);
+  testSet4.clear();
+  trueSet4.clear();
+
+  s21::Set<int> testSet5({50, 55, 45, 1, 30, 46});  // normal with 1
+  s21::Set<int> trueSet5({50, 55, 45, 30, 46});
+  testSet5.erase(testSet5.find(1));
+  EXPECT_EQ(testSet5, trueSet5);
+  testSet5.clear();
+  trueSet5.clear();
+
+  s21::Set<int> testSet6({50, 55, 45, 1, 30, 46});  // normal with 0
+  s21::Set<int> trueSet6({50, 55, 45, 1, 46});
+  testSet6.erase(testSet6.find(30));
+  EXPECT_EQ(testSet6, trueSet6);
+  testSet6.clear();
+  trueSet6.clear();
 }
 
 TEST(SetSuite, Find) {
