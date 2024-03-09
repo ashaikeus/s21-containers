@@ -289,3 +289,14 @@ TEST(SetSuite, Merge) {
   testSet22.clear();
   trueSet2.clear();
 }
+
+TEST(SetSuite, InsertMany) {
+  s21::Set<int> testSet1({50, 45, 1, 30});
+  s21::Set<int> testSet2({49, 46, 55, 51, 53});
+  s21::Set<int> trueSet({50, 45, 1, 30, 49, 46, 55, 51, 53});
+  testSet1.insert_many(testSet2);
+  EXPECT_EQ(testSet1, trueSet);
+  testSet1.clear();
+  testSet2.clear();
+  trueSet.clear();
+}

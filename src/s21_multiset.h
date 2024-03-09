@@ -429,6 +429,20 @@ class Multiset {
     return std::make_pair(lower_bound(key), upper_bound(key));
   }
 
+  template <class... Args>
+  s21::vector<iterator> insert_many(Args&&... args) {
+    s21::vector<iterator> result;
+    (
+        [&] {
+          for (iterator iter = args.begin(); iter != args.end(); ++iter) {
+            insert(*iter);
+            result.push_back(iter);
+          }
+        }(),
+        ...);
+    return result;
+  }
+
   // void printAll() const {
   //   if (!empty()) {
   //     for (const_iterator it = cbegin();

@@ -428,6 +428,22 @@ class Map {
     return ret;
   }
 
+  template <class... Args>
+  s21::vector<std::pair<iterator, bool>> insert_many(Args&&... args) {
+    s21::vector<std::pair<iterator, bool>> result;
+    (
+        [&] {
+          for (iterator iter = args.begin(); iter != args.end(); ++iter) {
+            bool ret =
+                insert(iter.getCurrent()->key_, iter.getCurrent()->value_)
+                    .second;
+            result.push_back(std::make_pair(iter, ret));
+          }
+        }(),
+        ...);
+    return result;
+  }
+
   // void printAll() const {
   //   if (!empty()) {
   //     for (const_iterator it = cbegin();

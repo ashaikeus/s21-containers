@@ -274,6 +274,17 @@ TEST(MapSuite, Erase2) {
   testMap3.clear();
   trueMap3.clear();
 
+  s21::Map<int, std::string> testMap4 = {{50, "Elena"},      {55, "Mikhail"},
+                                         {56, "Svetoslava"}, {54, "Dmitriy"},
+                                         {9, "Andrew"},      {19, "Rose"}};
+  s21::Map<int, std::string> trueMap4 = {{55, "Mikhail"},    {56, "Svetoslava"},
+                                         {56, "Svetoslava"}, {54, "Dmitriy"},
+                                         {9, "Andrew"},      {19, "Rose"}};
+  testMap4.erase(testMap4.find(50));
+  EXPECT_EQ(testMap4, trueMap4);
+  testMap4.clear();
+  trueMap4.clear();
+
   s21::Map<int, std::string> testMap7 = {
       {50, "Elena"}, {55, "Mikhail"}, {56, "Svetoslava"}};
   s21::Map<int, std::string> trueMap7 = {{50, "Elena"}, {56, "Svetoslava"}};
@@ -410,5 +421,24 @@ TEST(MapSuite, Iterator) {
   EXPECT_EQ(it.getCurrent()->key_, itrue->first);
   EXPECT_EQ(it.getCurrent()->value_, itrue->second);
   testMap.clear();
+  trueMap.clear();
+}
+
+TEST(MapSuite, InsertMany) {
+  s21::Map<int, std::string> testMap1 = {{50, "Elena"},
+                                         {49, "Lyubov"},
+                                         {46, "Victoria"},
+                                         {13, "Diana"},
+                                         {2, "Irina"}};
+  s21::Map<int, std::string> testMap2 = {
+      {45, "Michael"}, {1, "Andrew"}, {30, "Kirill"}, {1, "Arkadiy"}};
+  s21::Map<int, std::string> trueMap = {
+      {50, "Elena"}, {49, "Lyubov"}, {46, "Victoria"},
+      {13, "Diana"}, {2, "Irina"},   {45, "Michael"},
+      {1, "Andrew"}, {30, "Kirill"}, {1, "Arkadiy"}};
+  testMap1.insert_many(testMap2);
+  EXPECT_EQ(testMap1, trueMap);
+  testMap1.clear();
+  testMap2.clear();
   trueMap.clear();
 }

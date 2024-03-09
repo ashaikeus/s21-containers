@@ -341,3 +341,14 @@ TEST(MultisetSuite, EqualRangeBounds) {
   testMultiset2.clear();
   testMultiset3.clear();
 }
+
+TEST(MultisetSuite, InsertMany) {
+  s21::Multiset<int> testSet1({50, 45, 1, 30, 30});
+  s21::Multiset<int> testSet2({49, 46, 55, 51, 53, 53});
+  s21::Multiset<int> trueSet({50, 45, 1, 30, 30, 49, 46, 55, 51, 53, 53});
+  testSet1.insert_many(testSet2);
+  EXPECT_EQ(testSet1, trueSet);
+  testSet1.clear();
+  testSet2.clear();
+  trueSet.clear();
+}

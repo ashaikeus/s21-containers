@@ -398,17 +398,31 @@ class Set {
     return ret;
   }
 
-  void printAll() const {
-    if (!empty()) {
-      for (const_iterator it = cbegin(); it.getCurrent() && it != cend();
-           ++it) {
-        std::cout << *it << " ";
-      }
-      std::cout << std::endl;
-    } else {
-      std::cout << "No elements in set" << std::endl;
-    }
+  template <class... Args>
+  s21::vector<std::pair<iterator, bool>> insert_many(Args&&... args) {
+    s21::vector<std::pair<iterator, bool>> result;
+    (
+        [&] {
+          for (iterator iter = args.begin(); iter != args.end(); ++iter) {
+            bool ret = insert(*iter).second;
+            result.push_back(std::make_pair(iter, ret));
+          }
+        }(),
+        ...);
+    return result;
   }
+
+  // void printAll() const {
+  //   if (!empty()) {
+  //     for (const_iterator it = cbegin(); it.getCurrent() && it != cend();
+  //          ++it) {
+  //       std::cout << *it << " ";
+  //     }
+  //     std::cout << std::endl;
+  //   } else {
+  //     std::cout << "No elements in set" << std::endl;
+  //   }
+  // }
 };
 }  // namespace s21
 
