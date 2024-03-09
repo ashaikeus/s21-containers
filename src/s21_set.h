@@ -40,15 +40,15 @@ class Set {
 
  public:
   template <class value_type>
-  class Iterator {
+  class SetIterator {
    private:
     Node* current_;
     Node* successor_;
 
    public:
-    Iterator(Node* node) : current_(node), successor_(nullptr) {}
+    SetIterator(Node* node) : current_(node), successor_(nullptr) {}
 
-    Iterator operator++() {
+    SetIterator operator++() {
       if (current_->right_) {
         current_ = current_->right_;
         while (current_->left_) {
@@ -80,15 +80,15 @@ class Set {
   };
 
   template <class value_type>
-  class ConstIterator {
+  class ConstSetIterator {
    private:
     Node* current_;
     Node* successor_;
 
    public:
-    ConstIterator(Node* node) : current_(node), successor_(nullptr) {}
+    ConstSetIterator(Node* node) : current_(node), successor_(nullptr) {}
 
-    ConstIterator operator++() {
+    ConstSetIterator operator++() {
       if (current_->right_) {
         current_ = current_->right_;
         while (current_->left_) {
@@ -119,8 +119,8 @@ class Set {
     Node* getCurrent() const { return current_; }
   };
 
-  using iterator = Iterator<T>;
-  using const_iterator = ConstIterator<T>;
+  using iterator = SetIterator<T>;
+  using const_iterator = ConstSetIterator<T>;
 
   Set() : root_(nullptr), nodeCount_(0) {}
 

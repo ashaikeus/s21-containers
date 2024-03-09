@@ -44,15 +44,15 @@ class Map {
 
  public:
   template <class value_type>
-  class Iterator {
+  class MapIterator {
    private:
     Node* current_;
     Node* successor_;
 
    public:
-    Iterator(Node* node) : current_(node), successor_(nullptr) {}
+    MapIterator(Node* node) : current_(node), successor_(nullptr) {}
 
-    Iterator operator++() {
+    MapIterator operator++() {
       if (current_->right_ != nullptr) {
         current_ = current_->right_;
         while (current_->left_ != nullptr) {
@@ -81,15 +81,15 @@ class Map {
   };
 
   template <class value_type>
-  class ConstIterator {
+  class ConstMapIterator {
    private:
     Node* current_;
     Node* successor_;
 
    public:
-    ConstIterator(Node* node) : current_(node), successor_(nullptr) {}
+    ConstMapIterator(Node* node) : current_(node), successor_(nullptr) {}
 
-    ConstIterator operator++() {
+    ConstMapIterator operator++() {
       if (current_->right_ != nullptr) {
         current_ = current_->right_;
         while (current_->left_ != nullptr) {
@@ -117,8 +117,8 @@ class Map {
     bool operator==(std::nullptr_t) const { return current_ == nullptr; }
   };
 
-  using iterator = Iterator<T>;
-  using const_iterator = ConstIterator<T>;
+  using iterator = MapIterator<T>;
+  using const_iterator = ConstMapIterator<T>;
 
   Map() : root_(nullptr), nodeCount_(0) {}
 

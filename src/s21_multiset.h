@@ -39,15 +39,15 @@ class Multiset {
 
  public:
   template <class value_type>
-  class Iterator {
+  class MultisetOperator {
    private:
     Node* current_;
     Node* successor_;
 
    public:
-    Iterator(Node* node) : current_(node), successor_(nullptr) {}
+    MultisetOperator(Node* node) : current_(node), successor_(nullptr) {}
 
-    Iterator operator++() {
+    MultisetOperator operator++() {
       if (current_->right_ != nullptr) {
         current_ = current_->right_;
         while (current_->left_ != nullptr) {
@@ -80,15 +80,15 @@ class Multiset {
   };
 
   template <class value_type>
-  class ConstIterator {
+  class ConstMultisetOperator {
    private:
     Node* current_;
     Node* successor_;
 
    public:
-    ConstIterator(Node* node) : current_(node), successor_(nullptr) {}
+    ConstMultisetOperator(Node* node) : current_(node), successor_(nullptr) {}
 
-    ConstIterator operator++() {
+    ConstMultisetOperator operator++() {
       if (current_->right_ != nullptr) {
         current_ = current_->right_;
         while (current_->left_ != nullptr) {
@@ -120,8 +120,8 @@ class Multiset {
     Node* getCurrent() const { return current_; }
   };
 
-  using iterator = Iterator<T>;
-  using const_iterator = ConstIterator<T>;
+  using iterator = MultisetOperator<T>;
+  using const_iterator = ConstMultisetOperator<T>;
 
   Multiset() : root_(nullptr), nodeCount_(0) {}
 
