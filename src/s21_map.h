@@ -324,7 +324,6 @@ class Map {
   void eraseWithTwoChildren(iterator pos) {
     // find largest node in the left subtree,
     // exchange values, delete old node
-    Node* parent = pos.getCurrent()->parent_;
     Node* largest = pos.getCurrent()->left_;
     while (largest->right_) largest = largest->right_;
     pos.getCurrent()->key_ = largest->key_;
