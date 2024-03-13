@@ -7,10 +7,10 @@
 
 namespace s21 {
 
-template <typename Vector>
+template <typename vector>
 class Iterator {
  public:
-  using value_type = typename Vector::value_type;
+  using value_type = typename vector::value_type;
   using iterator = value_type *;
   using reference = value_type &;
 
@@ -60,23 +60,23 @@ class Iterator {
 };
 
 template <class T>
-class Vector {
+class vector {
  public:
   using value_type = T;
   using reference = T &;
   using const_reference = const T &;
   // using iterator = T *;
-  using iterator = Iterator<Vector<value_type>>;
-  using const_iterator = const Iterator<Vector<value_type>>;
+  using iterator = Iterator<vector<value_type>>;
+  using const_iterator = const Iterator<vector<value_type>>;
   using size_type = size_t;
 
-  Vector() {
+  vector() {
     size_ = 0u;
     capacity_ = 0u;
     data_ = nullptr;
   }
 
-  explicit Vector(size_type new_size) {
+  explicit vector(size_type new_size) {
     size_ = new_size;
     capacity_ = new_size;
     if (new_size) {
@@ -86,7 +86,7 @@ class Vector {
     }
   }
 
-  Vector(std::initializer_list<value_type> const &items) {
+  vector(std::initializer_list<value_type> const &items) {
     size_ = items.size();
     capacity_ = items.size();
     data_ = new value_type[items.size()];
@@ -97,7 +97,7 @@ class Vector {
     }
   }
 
-  Vector(const Vector &copy_vector) {
+  vector(const vector &copy_vector) {
     size_ = copy_vector.size_;
     capacity_ = copy_vector.capacity_;
     if (size_ > 0) {
@@ -111,7 +111,7 @@ class Vector {
     }
   }
 
-  Vector(Vector &&move_vector) {
+  vector(vector &&move_vector) {
     size_ = move_vector.size_;
     capacity_ = move_vector.capacity_;
     data_ = move_vector.data_;
@@ -121,14 +121,14 @@ class Vector {
     move_vector.capacity_ = 0u;
   }
 
-  ~Vector() {
+  ~vector() {
     size_ = 0u;
     capacity_ = 0u;
     delete[] data_;
   }
 
-  Vector &operator=(Vector &&vector) {
-    this->~Vector();
+  vector &operator=(vector &&vector) {
+    this->~vector();
     size_ = vector.size_;
     capacity_ = vector.capacity_;
     if (size_ > 0) {
@@ -143,7 +143,7 @@ class Vector {
   }
 
   reference at(size_type index) {
-    if (index < 0 || index >= size_) {
+    if (index >= size_) {
       throw std::out_of_range("std::out_of_range");
     }
     return data_[index];
@@ -173,7 +173,8 @@ class Vector {
 
   void reserve(size_type new_capacity) {
     if (new_capacity > capacity_) {
-      value_type *larger_data_capacity = new value_type[new_capacity];
+      // value_type *larger_data_capacity = new value_type[new_capacity];
+      value_type *larger_data_capacity = (value_type *)calloc(new_capacity, sizeof(value_type));
       for (size_type element = 0; element < size_ && data_; element++) {
         larger_data_capacity[element] = data_[element];
       }
@@ -266,7 +267,7 @@ class Vector {
 
   void pop_back() { size_--; }
 
-  void swap(Vector &other) {
+  void swap(vector &other) {
     size_type buff_size = other.size();
     size_type buff_capacity = other.capacity();
     value_type *buff_data = other.data();
