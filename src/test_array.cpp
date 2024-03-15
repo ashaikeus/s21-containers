@@ -13,7 +13,7 @@ TEST(array, standart_constructor) {
   EXPECT_EQ(array_fl[0], 2);
   EXPECT_EQ(array_fl[1], 3);
   EXPECT_EQ(array_fl[2], 0);
-  EXPECT_EQ(array_fl.size(), 3);
+  EXPECT_EQ(array_fl.size(), 3u);
 }
 
 TEST(array, initializer_list_constructor) {
@@ -51,7 +51,7 @@ TEST(array, copy_move_constructor) {
   EXPECT_EQ(array_fl[2], array_int[2]);
 
   s21::array<int, 4> array_move2{1, 2, 3, 4};
-  s21::array<int, 4> array_move(move(array_move2));
+  s21::array<int, 4> array_move(std::move(array_move2));
   EXPECT_EQ(array_move[1], array_move2[1]);
   EXPECT_EQ(array_move[3], array_move2[3]);
 }
@@ -156,8 +156,10 @@ TEST(array, fill_function) {
 TEST(array, zero_constructor) {
   s21::array<int, 0> array_int;
   array<int, 0> true_array;
-  array_int.front();
-  array_int.back();
+
+  EXPECT_THROW(array_int.front(), std::invalid_argument);
+  EXPECT_THROW(array_int.back(), std::invalid_argument);
+
   EXPECT_TRUE(true_array.data() == nullptr);
   EXPECT_TRUE(array_int.data() == nullptr);
 

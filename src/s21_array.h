@@ -86,17 +86,17 @@ class array<T, 0> {
   using const_iterator = const T *;
   using size_type = size_t;
 
-  //   reference operator[](size_type) {
-  //     throw std::out_of_range("Index out of array range");
-  //   }
-
   reference at(size_type) {
     throw std::out_of_range("Index out of array range");
   }
 
-  const_reference front() const { return *static_cast<T *>(nullptr); }
+  const_reference front() const {
+    throw std::invalid_argument("Array is empty");
+  }
 
-  const_reference back() const { return *static_cast<T *>(nullptr); }
+  const_reference back() const {
+    throw std::invalid_argument("Array is empty");
+  }
 
   iterator data() noexcept { return nullptr; }
 
