@@ -5,12 +5,12 @@ TEST_FLAGS:=-lcheck -lgtest
 export LDFLAGS:="-L/opt/homebrew/lib"
 export CPPFLAGS:="-I/opt/homebrew/include" -lstdc++
 
-SRCS:=$(wildcard s21_v*.cpp)
-HDRS:=$(wildcard s21_v*.h)
+SRCS:=$(wildcard s21_*.cpp)
+HDRS:=$(wildcard s21_*.h)
 OBJS:=$(SRCS:%.cpp=%.o)
 TEST_SRCS:=$(wildcard test*.cpp)
 
-LIB_NAME:=s21_matrix_oop.a
+LIB_NAME:=s21_constainers.a
 
 all: clean test 
 
