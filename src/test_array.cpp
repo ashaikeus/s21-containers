@@ -1,4 +1,3 @@
-#include "s21_containersplus.h"
 #include "test.h"
 
 using namespace std;
@@ -25,7 +24,7 @@ TEST(array, initializer_list_constructor) {
   EXPECT_EQ(array_fl[0], 2);
   EXPECT_EQ(array_fl[1], 3);
   EXPECT_EQ(array_fl[2], 0);
-  EXPECT_EQ(array_fl.size(), 3);
+  EXPECT_EQ(array_fl.size(), 3u);
 
   EXPECT_EQ(array_fl.size(), true_array_int.size());
   EXPECT_EQ(array_fl[1], true_array_int[1]);
@@ -44,7 +43,7 @@ TEST(array, copy_move_constructor) {
   EXPECT_EQ(array_fl[0], 2);
   EXPECT_EQ(array_fl[1], 3);
   EXPECT_EQ(array_fl[2], 0);
-  EXPECT_EQ(array_fl.size(), 4);
+  EXPECT_EQ(array_fl.size(), 4u);
 
   EXPECT_EQ(array_fl.size(), array_int.size());
   EXPECT_EQ(array_fl[1], array_int[1]);
