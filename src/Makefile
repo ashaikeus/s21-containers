@@ -41,9 +41,9 @@ gcov_report:
 	@mv *.gcda ./gcov_report
 	@mv *.gcno ./gcov_report
 	@gcov ./gcov_report/*.gcno
-	@lcov -t "s21_matrix_cpp" -o s21_matrix_cpp.info -c -d ./gcov_report
+	@lcov -t "s21_containers_cpp" -o s21_containers_cpp.info -c -d ./gcov_report
 	@mv *.gcov ./gcov_report
-	@genhtml -o report s21_matrix_cpp.info
+	@genhtml -o report s21_containers_cpp.info
 	@open report/index.html
 
 style: 
