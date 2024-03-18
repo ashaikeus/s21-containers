@@ -1,5 +1,5 @@
-#ifndef S21_QUEUE_H
-#define S21_QUEUE_H
+#ifndef S21_QUEUE_H_
+#define S21_QUEUE_H_
 
 #include <utility>
 
@@ -12,28 +12,65 @@ public:
     using const_reference = const T &;
     using size_type = size_t;
 
-    queue() noexcept;
-    queue(const queue &q);
-    queue(queue &&q);
-    queue(std::initializer_list<value_type> l);
-    ~queue();
+    queue() noexcept {}
 
-    inline reference front();
-    inline const_reference front() const;
-    inline reference back();
-    inline const_reference back() const;
+    queue(const queue &other) {
+        list = other.list;
+    }
 
-    inline void push(const_reference x);
-    inline void push(value_type &&x);
-    inline void pop();
-    inline bool empty() const noexcept;
-    inline size_type size() const noexcept;
+    queue(queue &&other) {
+        list = std::move(other.list);
+    }
+
+    queue(std::initializer_list<value_type> init_list) {
+        for (auto i : init_list) {
+            list.push_back(i);
+        }
+    }
+
+    ~queue() {
+        list.clear();
+    }
+
+    inline reference front() {
+        return list.front();
+    }
+
+    inline const_reference front() const {
+        return list.front();
+    }
+
+    inline reference back() {
+        return list.back();
+    }
+
+    inline const_reference back() const {
+        return list.back();
+    }
+
+    inline void push(const_reference value) {
+        list.push_back(value);
+    }
+
+    inline void push(value_type &&value) {
+        list.push_back(value);
+    }
+
+    inline void pop() {
+        list.pop_front();
+    }
+
+    inline bool empty() const noexcept {
+        return list.empty();
+    }
+
+    inline size_type size() const noexcept {
+        return list.size();
+    }
 private:
-    std::list<value_type> list;
+    s21::list<value_type> list;
 };
 
 }
 
-#include "s21_queue.inl"
-
-#endif
+#endif // S21_QUEUE_H_
