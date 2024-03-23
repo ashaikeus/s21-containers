@@ -415,6 +415,8 @@ TEST(vector, pushback) {
 }
 
 TEST(vector, pop_back) {
+  s21::vector<int> empty_vector;
+  EXPECT_THROW(empty_vector.pop_back(), std::out_of_range);
   s21::vector<int> vector = {0, 1, 2};
   std::vector<int> true_vector = {0, 1, 2};
   vector.pop_back();

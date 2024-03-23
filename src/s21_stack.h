@@ -1,7 +1,7 @@
 #ifndef S21_STACK_H_
 #define S21_STACK_H_
 
-#include <utility>
+// #include <utility>
 
 namespace s21 {
 template <class T>
@@ -12,71 +12,123 @@ public:
     using const_reference = const T &;
     using size_type = size_t;
 
-    stack() noexcept {}
-
-    stack(const queue &other) {
-        list = other.list;
+    stack() noexcept {
+        size_ = 0u;
+        capacity_ = 0u;
+        data_ = nullptr;
     }
 
-    stack(queue &&other) {
-        list = std::move(other.list);
-    }
-
-    stack(std::initializer_list<value_type> init_list) {
-        for (auto i : init_list) {
-            list.push_back(i);
+    explicit stack(size_type new_size) {
+        size_ = new_size;
+        capacity_ = new_size;
+        if (new_size) {
+            data_ = new value_type[new_size];
+        } else {
+            data_ = nullptr;
         }
     }
 
+    stack(std::initializer_list<value_type> const &items) {
+        size_ = items.size();
+        capacity_ = items.size();
+        data_ = new value_type[items.size()];
+
+        int element = 0;
+        for (auto item = items.begin(); item != items.end(); item++, element++) {
+        data_[element] = *item;
+        }
+    }
+
+    stack(const stack &copy_stack) {
+        size_ = copy_stack.size_;
+        capacity_ = copy_stack.capacity_;
+        if (size_ > 0) {
+        value_type *copy_data = new value_type[capacity_];
+        for (size_type element = 0; element < size_; element++) {
+            copy_data[element] = copy_stack.data_[element];
+        }
+        data_ = copy_data;
+        } else {
+        data_ = copy_stack.data_;
+        }
+    }
+
+    stack(stack &&move_stack) {
+        size_ = move_stack.size_;
+        capacity_ = move_stack.capacity_;
+        data_ = move_stack.data_;
+
+        move_stack.data_ = nullptr;
+        move_stack.size_ = 0u;
+        move_stack.capacity_ = 0u;
+    }
+
     ~stack() {
-        list.clear();
+        size_ = 0u;
+        capacity_ = 0u;
+        delete[] data_;
     }
 
-    inline reference front() {
-        return list.front();
+    const_reference top() {
+        return data_[this->top_position()];
     }
 
-    inline const_reference front() const {
-        return list.front();
+    size_type size() const {
+        return size_;
     }
 
-    inline reference back() {
-        return list.back();
+    bool empty() const { return capacity_ > 0 && size_ > 0 ? false : true; }
+
+    void push(const value_type value) {
+        if (size_ >= capacity_) {
+        if (capacity_ == 0)
+            reserve(1);
+        else
+            reserve(capacity_ * 2);
+        }
+        data_[size_] = value;
+        size_++;
     }
 
-    inline const_reference back() const {
-        return list.back();
+    void pop() {
+        if (size_ > 0) size_--;
+        else throw std::out_of_range("std::out_of_range");
     }
 
-    inline void push(const_reference value) {
-        list.push_back(value);
+    void swap(stack &other) {
+        size_type buff_size = other.size();
+        size_type buff_capacity = other.capacity();
+        value_type *buff_data = other.data_;
+
+        other.data_ = this->data_;
+        other.size_ = this->size_;
+        other.capacity_ = this->capacity_;
+
+        data_ = buff_data;
+        size_ = buff_size;
+        capacity_ = buff_capacity;
     }
 
-    inline void push(value_type &&value) {
-        list.push_back(value);
-    }
-
-    inline void pop() {
-        list.pop_back();
-    }
-
-    inline reference top() {
-        return *list.rbegin();
-    }
-
-    inline const_reference top() const {
-        return *list.rbegin();
-    }
-
-    inline bool empty() const noexcept {
-        return list.empty();
-    }
-
-    inline size_type size() const noexcept {
-        return list.size();
-    }
 private:
-    s21::list<value_type> list;
+    size_type size_ = 0u;
+    size_type capacity_ = 0u;
+    value_type *data_ = nullptr;
+
+    int top_position() const {
+        return size_ - 1;
+    }
+
+    void reserve(size_type new_capacity) {
+        if (new_capacity > capacity_) {
+        value_type *larger_data_capacity = (value_type *)calloc(new_capacity, sizeof(value_type));
+        for (size_type element = 0; element < size_ && data_; element++) {
+            larger_data_capacity[element] = data_[element];
+        }
+        if (data_) delete[] data_;
+        data_ = larger_data_capacity;
+        capacity_ = new_capacity;
+        }
+    }
 };
 
 }

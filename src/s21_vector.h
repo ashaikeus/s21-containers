@@ -65,7 +65,6 @@ class vector {
   using value_type = T;
   using reference = T &;
   using const_reference = const T &;
-  // using iterator = T *;
   using iterator = Iterator<vector<value_type>>;
   using const_iterator = const Iterator<vector<value_type>>;
   using size_type = size_t;
@@ -173,7 +172,6 @@ class vector {
 
   void reserve(size_type new_capacity) {
     if (new_capacity > capacity_) {
-      // value_type *larger_data_capacity = new value_type[new_capacity];
       value_type *larger_data_capacity = (value_type *)calloc(new_capacity, sizeof(value_type));
       for (size_type element = 0; element < size_ && data_; element++) {
         larger_data_capacity[element] = data_[element];
@@ -265,7 +263,10 @@ class vector {
     size_++;
   }
 
-  void pop_back() { size_--; }
+  void pop_back() { 
+    if (size_ > 0) size_--;
+    else throw std::out_of_range("std::out_of_range");
+  }
 
   void swap(vector &other) {
     size_type buff_size = other.size();
