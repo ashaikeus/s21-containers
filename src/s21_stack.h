@@ -18,16 +18,6 @@ public:
         data_ = nullptr;
     }
 
-    explicit stack(size_type new_size) {
-        size_ = new_size;
-        capacity_ = new_size;
-        if (new_size) {
-            data_ = new value_type[new_size];
-        } else {
-            data_ = nullptr;
-        }
-    }
-
     stack(std::initializer_list<value_type> const &items) {
         size_ = items.size();
         capacity_ = items.size();
@@ -70,7 +60,7 @@ public:
     }
 
     const_reference top() {
-        return data_[this->top_position()];
+        return size_ > 0 ? data_[this->top_position()] : throw std::out_of_range("std::out_of_range");
     }
 
     size_type size() const {
@@ -97,7 +87,7 @@ public:
 
     void swap(stack &other) {
         size_type buff_size = other.size();
-        size_type buff_capacity = other.capacity();
+        size_type buff_capacity = other.capacity_;
         value_type *buff_data = other.data_;
 
         other.data_ = this->data_;
@@ -107,6 +97,16 @@ public:
         data_ = buff_data;
         size_ = buff_size;
         capacity_ = buff_capacity;
+    }
+
+    template<class... Args>
+    void insert_many_front(Args... stacks) {
+        ([&]
+        {
+        for(size_type i = 0; i < stacks.size(); i++) {
+            this->push(stacks.data_[i]);
+        }
+        } (), ...);
     }
 
 private:
