@@ -1,8 +1,6 @@
 #ifndef S21_STACK_H_
 #define S21_STACK_H_
 
-// #include <utility>
-
 namespace s21 {
 template <class T>
 class stack {
