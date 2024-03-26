@@ -13,6 +13,7 @@ UNAME_S := $(shell uname -s)
     endif
     ifeq ($(UNAME_S),Darwin)
         TEST_FLAGS += -lcheck 
+	endif
 
 SRCS:=$(wildcard s21_*.cpp)
 HDRS:=$(wildcard s21_*.h)
