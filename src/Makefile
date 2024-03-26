@@ -1,9 +1,18 @@
 CC:=gcc
 FLAGS:=-Wall -Wextra -Werror -std=c++17
-TEST_FLAGS:=-lcheck -lgtest
+TEST_FLAGS:=-lgtest
 
 export LDFLAGS:="-L/opt/homebrew/lib"
 export CPPFLAGS:="-I/opt/homebrew/include" -lstdc++
+
+UNAME_S := $(shell uname -s)
+    ifeq ($(UNAME_S),Linux)
+		TEST_FLAGS += -lstdc++ -lm
+		LDFLAGS:=""
+		CPPFLAGS:=""
+    endif
+    ifeq ($(UNAME_S),Darwin)
+        TEST_FLAGS += -lcheck 
 
 SRCS:=$(wildcard s21_*.cpp)
 HDRS:=$(wildcard s21_*.h)
@@ -20,7 +29,7 @@ all: clean test
 test:
 	@echo "\033[1;34mCreating tests\033[0m"
 	@$(CC) $(FLAGS) $(CPPFLAGS) $(LDFLAGS) $(SRCS) $(TEST_SRCS) $(TEST_FLAGS) -o test
-	@leaks -q --atExit -- ./test
+	@./test
 	@echo "\033[1;42m DONE \033[0m" 
 
 clean:
