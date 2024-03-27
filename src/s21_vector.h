@@ -49,6 +49,8 @@ class Iterator {
 
   iterator operator-(int value) { return ptr_ - value; }
 
+  bool operator==(std::nullptr_t) const { return ptr_ == nullptr; }
+
   bool operator==(const Iterator &other) const { return ptr_ == other.ptr_; }
 
   bool operator!=(const Iterator &other) const { return ptr_ != other.ptr_; }

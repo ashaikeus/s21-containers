@@ -192,19 +192,9 @@ TEST(vector, iterator_begin) {
 
 TEST(vector, iterator_end) {
   s21::vector<int> vector = {0, 1, 2};
-  std::vector<int> true_vector = {0, 1, 2};
-  EXPECT_EQ(*true_vector.end(), *vector.end());
-  // for (s21::vector<int>::iterator iter = vector.begin(); iter !=
-  // vector.end(); iter++) {
-  //   std::cout << *iter << std::endl;
-  // }
-  // for (int value : vector) {
-  //   std::cout << value << std::endl;
-  // }
-  true_vector.resize(0);
+  EXPECT_EQ(vector.end(), nullptr);
   vector.clear();
   vector.shrink_to_fit();
-  // EXPECT_EQ(*true_vector.end(), *vector.end());
 }
 
 TEST(vector, empty) {
