@@ -45,6 +45,8 @@ class Multiset {
     Node* successor_;
 
    public:
+    MultisetOperator() : current_(nullptr), successor_(nullptr) {}
+
     MultisetOperator(Node* node) : current_(node), successor_(nullptr) {}
 
     MultisetOperator operator++() {

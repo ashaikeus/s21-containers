@@ -1,19 +1,16 @@
 CC:=gcc
 FLAGS:=-Wall -Wextra -Werror -std=c++17
-TEST_FLAGS:=-lgtest
+TEST_FLAGS:=-lgtest -lcheck
 
 export LDFLAGS:="-L/opt/homebrew/lib"
 export CPPFLAGS:="-I/opt/homebrew/include" -lstdc++
 
 UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Linux)
-		TEST_FLAGS += -lstdc++ -lm
+		TEST_FLAGS := -lstdc++ -lgtest -g -lm
 		LDFLAGS:=""
 		CPPFLAGS:=""
     endif
-    ifeq ($(UNAME_S),Darwin)
-        TEST_FLAGS += -lcheck 
-	endif
 
 SRCS:=$(wildcard s21_*.cpp)
 HDRS:=$(wildcard s21_*.h)

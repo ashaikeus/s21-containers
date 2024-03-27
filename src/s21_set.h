@@ -46,6 +46,8 @@ class Set {
     Node* successor_;
 
    public:
+    SetIterator() : current_(nullptr), successor_(nullptr) {}
+
     SetIterator(Node* node) : current_(node), successor_(nullptr) {}
 
     SetIterator operator++() {
