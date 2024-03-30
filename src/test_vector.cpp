@@ -192,7 +192,11 @@ TEST(vector, iterator_begin) {
 
 TEST(vector, iterator_end) {
   s21::vector<int> vector = {0, 1, 2};
-  EXPECT_EQ(vector.end(), nullptr);
+  s21::vector<int> true_vector;
+  true_vector.push_back(0);
+  true_vector.push_back(1);
+  true_vector.push_back(2);
+  EXPECT_EQ(*vector.end(), *true_vector.end());
   vector.clear();
   vector.shrink_to_fit();
 }

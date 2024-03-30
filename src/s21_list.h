@@ -2,6 +2,7 @@
 #define S21_LIST_H_
 
 #include <initializer_list>
+#include <numeric>
 
 namespace s21 {
 
@@ -21,10 +22,10 @@ private:
         node *next;
         node *prev;
 
-        node(const_reference value) {
-            this->value = value_type(value);
-            this->next = nullptr;
-            this->prev = nullptr;
+        node(const_reference value_input) {
+            value = value_type(value_input);
+            next = nullptr;
+            prev = nullptr;
         }
         // node(value_type&& value) {
         //     this->value = value_type(value);
@@ -35,15 +36,11 @@ private:
     node *head;
     node *tail;
     // node fake_node;
-    size_type _size;
+    size_type size_;
 
 public:
     class iterator {
     public:
-        using value_type = value_type;
-        using reference = reference;
-        using pointer = pointer;
-
         iterator() = delete;
 
         iterator(node *ptr) {
@@ -105,6 +102,10 @@ public:
 
         node* node_next_pointer() const {
             return ptr->next;
+        }
+
+        node* node_pointer() {
+            return ptr;
         }
     private:
         node *ptr;
@@ -189,26 +190,47 @@ public:
     // using reverse_iterator = std::reverse_iterator<iterator>;
     // using const_reverse_iterator = std::const_reverse_iterator<const_iterator>;
 
-    // list() noexcept : _size(0), head(nullptr), tail(nullptr) {}
+    // list() noexcept : size_(0), head(nullptr), tail(nullptr) {}
 
     list() {
         node *null_node = new node(0);
         head = null_node;
         tail = null_node;
-        _size = 0u;
+        size_ = 0u;
+    }
+
+    list(std::initializer_list<value_type> const &items) {
+        head = nullptr;
+        tail = nullptr;
+        size_ = 0u;
+        for (auto item = items.begin(); item != items.end(); item++) {
+            this->push_back(*item);
+        }
     }
 
     ~list() {
-        if (head != nullptr) {
-            for (iterator current_node = this->begin();; ++current_node) {
-                delete[] current_node.operator->();
-                if (current_node.node_next_pointer() == nullptr) break;
+        if (!empty()) {
+            for (node *element = this->head;;) {
+                node *next_node = element->next;
+                delete[] element;
+                element = next_node;
+                if (element->next == nullptr) {
+                    delete[] element;
+                    break;
+                }
             }
+            // for (iterator current_node = this->begin();; ++current_node) {
+            //     std::cout << "Here2" << std::endl;
+            //     if (current_node.node_next_pointer() == nullptr) {
+            //         delete[] current_node.node_pointer();
+            //         break;
+            //     }
+            //     delete[] current_node.node_pointer();
+            // }
         }
-        _size = 0u;
+        size_ = 0u;
         head = nullptr;
         tail = nullptr;
-        // delete[] this->head;
     }
 
     // explicit list(size_type count) : list() {
@@ -250,13 +272,13 @@ public:
     // }
 
     // list &operator=(list&& other) {
-    //     _size = other._size;
+    //     size_ = other._size;
     //     head = other.head;
     //     tail = other.tail;
     //     fake_node = other.fake_node;
     //     head->prev = &fake_node;
     //     tail->next = &fake_node;
-    //     other._size = 0;
+    //     other.size_ = 0;
     //     other.head = nullptr;
     //     other.tail = nullptr;
     //     other.fake_node.next = nullptr;
@@ -328,19 +350,19 @@ public:
     // }
 
     inline size_type size() const noexcept {
-        return _size;
+        return size_;
     }
     
     inline bool empty() const noexcept {
-        return _size == 0;
+        return size_ == 0;
     }
 
-    // void resize(size_type new_size) {
-    //     if (_size == new_size) return;
+    // void resize(size_type newsize_) {
+    //     if (size_ == new_size) return;
     //     if ()
     // }
 
-    // void resize(size_type new_size, const_reference value);
+    // void resize(size_type newsize_, const_reference value);
 
     // iterator insert(const_iterator where, const_reference value);
     // iterator insert(const_iterator where, value_type&& value);
@@ -358,22 +380,19 @@ public:
         
     // }
 
-    // void push_back(const_reference value) {
-    //     node *new_node = new node(value);
-    //     if (empty()) {
-    //         head = new_node;
-    //         tail = new_node;
-    //         tail->prev = &fake_node;
-    //         fake_node.next = head;
-    //     } else {
-    //         tail->next = new_node;
-    //         new_node->prev = tail;
-    //         tail = new_node;
-    //     }
-    //     tail->next = &fake_node;
-    //     fake_node.prev = tail;
-    //     ++_size;
-    // }
+    void push_back(const_reference value) {
+        node *new_node = new node(value);
+        if (empty()) {
+            head = new_node;
+            tail = new_node;
+        } else {
+            tail->next = new_node;
+            new_node->prev = tail;
+            tail = new_node;
+        }
+        tail->next = nullptr;
+        ++size_;
+    }
 
     // void push_back(value_type&& value) {
     //     node *new_node = new node(value);
@@ -389,7 +408,7 @@ public:
     //     }
     //     tail->next = &fake_node;
     //     fake_node.prev = tail;
-    //     ++_size;
+    //     ++size_;
     // }
 
     // void push_front(const_reference value) {
@@ -406,7 +425,7 @@ public:
     //     }
     //     head->prev = &fake_node;
     //     fake_node.next = head;
-    //     ++_size;
+    //     ++size_;
     // }
 
     // void push_front(value_type&& value) {
@@ -423,13 +442,13 @@ public:
     //     }
     //     head->prev = &fake_node;
     //     fake_node.next = head;
-    //     ++_size;
+    //     ++size_;
     // }
 
     // void pop_back() {
-    //     if (_size == 0) return;
-    //     _size--;
-    //     if (_size == 1) {
+    //     if (size_ == 0) return;
+    //     size_--;
+    //     if (size_ == 1) {
     //         delete tail;
     //         head = nullptr;
     //         tail = nullptr;
@@ -444,9 +463,9 @@ public:
     // }
 
     // void pop_front() {
-    //     if (_size == 0) return;
-    //     _size--;
-    //     if (_size == 1) {
+    //     if (size_ == 0) return;
+    //     size_--;
+    //     if (size_ == 1) {
     //         delete head;
     //         head = nullptr;
     //         tail = nullptr;
