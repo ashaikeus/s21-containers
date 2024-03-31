@@ -223,10 +223,10 @@ public:
         if (!empty() || head != nullptr) {
             for (node *element = this->head;;) {
                 node *next_node = element->next;
-                delete[] element;
+                delete element;
                 element = next_node;
                 if (element->next == nullptr) {
-                    delete[] element;
+                    delete element;
                     break;
                 }
             }
@@ -382,7 +382,7 @@ public:
     void erase(iterator pos) {
         pos.node_prev_pointer()->next = pos.node_next_pointer();
         pos.node_next_pointer()->prev = pos.node_prev_pointer();
-        delete[] pos.node_pointer();
+        delete pos.node_pointer();
     }
 
     // void resize(size_type newsize_) {
