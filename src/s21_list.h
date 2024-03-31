@@ -57,7 +57,7 @@ public:
 
         ~iterator() = default;
 
-        iterator &operator=(iterator &other) {
+        iterator &operator=(const iterator &other) {
             this->ptr = other.ptr;
             return *this;
         }
@@ -373,9 +373,12 @@ public:
         node *new_node = new node(value, pos.node_next_pointer(), pos.node_pointer());
         pos.node_pointer()->next = new_node;
         ++pos;
-        ++pos;
-        pos.node_pointer()->prev = new_node;
-        --pos;
+        if (pos.node_next_pointer() != nullptr) {
+            pos.node_next_pointer()->prev = new_node;
+            // ++pos;
+            // pos.node_pointer()->prev = new_node;
+            // --pos;
+        } 
         return pos;
     }
 
@@ -506,6 +509,15 @@ public:
         }
     }
 
+    void splice(iterator pos, list& other) {
+        for (iterator iter = other.begin(); iter != nullptr; ++iter) {
+            pos = this->insert(pos, iter.node_pointer()->value);
+        }
+    }
+
+    void reverse() {
+        
+    }
     // void remove(const_reference value) {
     //     for (auto it = )
     // }

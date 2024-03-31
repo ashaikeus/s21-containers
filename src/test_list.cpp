@@ -129,3 +129,18 @@ TEST(list, merge) {
     }
     EXPECT_EQ(value, 6);
 }
+
+TEST(list, splice) {
+    s21::list<int> s21_list = {0, 1, 5};
+    s21::list<int> s21_list2 = {2, 3, 4};
+    auto iter = s21_list.end();
+    --iter;
+    s21_list.splice(iter, s21_list2);
+    int value = 0;
+    for (auto pointer = s21_list.begin(); pointer != nullptr; ++pointer, value++) {
+        std::cout << pointer.node_pointer()->value << std::endl;
+        EXPECT_EQ(value, pointer.node_pointer()->value);
+    }
+    EXPECT_EQ(value, 6);
+
+}

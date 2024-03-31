@@ -118,7 +118,6 @@ private:
 
     void reserve(size_type new_capacity) {
         if (new_capacity > capacity_) {
-        // value_type *larger_data_capacity = (value_type *)calloc(new_capacity, sizeof(value_type));
         value_type *larger_data_capacity = new value_type[new_capacity];
         for (size_type element = 0; element < size_ && data_; element++) {
             larger_data_capacity[element] = data_[element];
