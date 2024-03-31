@@ -30,7 +30,11 @@ private:
         // node(value_type&& value) {
         //     this->value = value_type(value);
         // }
-    
+        node(const_reference value_input, node* next_input, node* prev_input) {
+            value = value_input;
+            next = next_input;
+            prev = prev_input;
+        }
     };
 
     node *head;
@@ -64,6 +68,10 @@ public:
 
         bool operator!=(iterator &other) const {
             return this->ptr != other.ptr;
+        }
+
+        bool operator!=(std::nullptr_t) const {
+            return this->ptr != nullptr;
         }
 
         iterator &operator++() {
@@ -102,6 +110,10 @@ public:
 
         node* node_next_pointer() const {
             return ptr->next;
+        }
+
+        node* node_prev_pointer() const {
+            return ptr->prev;
         }
 
         node* node_pointer() {
@@ -193,9 +205,8 @@ public:
     // list() noexcept : size_(0), head(nullptr), tail(nullptr) {}
 
     list() {
-        node *null_node = new node(0);
-        head = null_node;
-        tail = null_node;
+        head = nullptr;
+        tail = nullptr;
         size_ = 0u;
     }
 
@@ -219,14 +230,7 @@ public:
                     break;
                 }
             }
-            // for (iterator current_node = this->begin();; ++current_node) {
             //     std::cout << "Here2" << std::endl;
-            //     if (current_node.node_next_pointer() == nullptr) {
-            //         delete[] current_node.node_pointer();
-            //         break;
-            //     }
-            //     delete[] current_node.node_pointer();
-            // }
         }
         size_ = 0u;
         head = nullptr;
@@ -313,9 +317,9 @@ public:
     //     return const_iterator(head);
     // }
 
-    // inline iterator end() {
-    //     return iterator(&fake_node);
-    // }
+    iterator end() {
+        return iterator(this->tail);
+    }
 
     // inline const_iterator end() const {
     //     return const_iterator(&fake_node);
@@ -352,9 +356,33 @@ public:
     inline size_type size() const noexcept {
         return size_;
     }
+
+    size_type max_size() const {
+        return std::numeric_limits<size_t>::max() / sizeof(node(value_type));
+    }
     
-    inline bool empty() const noexcept {
+    bool empty() const noexcept {
         return size_ == 0;
+    }
+
+    void clear() {
+        this->~list();
+    }
+
+    iterator insert(iterator pos, const_reference value) {
+        node *new_node = new node(value, pos.node_next_pointer(), pos.node_pointer());
+        pos.node_pointer()->next = new_node;
+        ++pos;
+        ++pos;
+        pos.node_pointer()->prev = new_node;
+        --pos;
+        return pos;
+    }
+
+    void erase(iterator pos) {
+        pos.node_prev_pointer()->next = pos.node_next_pointer();
+        pos.node_next_pointer()->prev = pos.node_prev_pointer();
+        delete[] pos.node_pointer();
     }
 
     // void resize(size_type newsize_) {
@@ -363,22 +391,6 @@ public:
     // }
 
     // void resize(size_type newsize_, const_reference value);
-
-    // iterator insert(const_iterator where, const_reference value);
-    // iterator insert(const_iterator where, value_type&& value);
-    // iterator insert(const_iterator where, size_type count, const_reference value);
-    // iterator insert(const_iterator where, std::initializer_list<value_type> init_list);
-
-    // template <class InputIterator>
-    // iterator insert(const_iterator where, InputIterator first, InputIterator last);
-
-    // iterator erase(const_iterator where) {
-
-    // }
-
-    // iterator erase(const_iterator first, const_iterator last) {
-        
-    // }
 
     void push_back(const_reference value) {
         node *new_node = new node(value);
@@ -411,22 +423,19 @@ public:
     //     ++size_;
     // }
 
-    // void push_front(const_reference value) {
-    //     node *new_node = new node(value);
-    //     if (empty()) {
-    //         head = new_node;
-    //         tail = new_node;
-    //         tail->next = &fake_node;
-    //         fake_node.prev = tail;
-    //     } else {
-    //         head->prev = new_node;
-    //         new_node->next = head;
-    //         head = new_node;
-    //     }
-    //     head->prev = &fake_node;
-    //     fake_node.next = head;
-    //     ++size_;
-    // }
+    void push_front(const_reference value) {
+        node *new_node = new node(value);
+        if (empty()) {
+            head = new_node;
+            tail = new_node;
+        } else {
+            head->prev = new_node;
+            new_node->next = head;
+            head = new_node;
+        }
+        head->prev = nullptr;
+        ++size_;
+    }
 
     // void push_front(value_type&& value) {
     //     node *new_node = new node(value);
@@ -445,39 +454,35 @@ public:
     //     ++size_;
     // }
 
-    // void pop_back() {
-    //     if (size_ == 0) return;
-    //     size_--;
-    //     if (size_ == 1) {
-    //         delete tail;
-    //         head = nullptr;
-    //         tail = nullptr;
-    //         fake_node.next = nullptr;
-    //         fake_node.prev = nullptr;   
-    //     } else {
-    //         node *prev = tail->prev;
-    //         delete tail;
-    //         tail = prev;
-    //         fake_node.prev = tail;
-    //     }
-    // }
+    void pop_back() {
+        if (size_ == 0) return;
+        size_--;
+        if (size_ == 1) {
+            delete tail;
+            head = nullptr;
+            tail = nullptr;
+        } else {
+            node *prev = tail->prev;
+            delete tail;
+            tail = prev;
+            tail->next = nullptr;
+        }
+    }
 
-    // void pop_front() {
-    //     if (size_ == 0) return;
-    //     size_--;
-    //     if (size_ == 1) {
-    //         delete head;
-    //         head = nullptr;
-    //         tail = nullptr;
-    //         fake_node.next = nullptr;
-    //         fake_node.prev = nullptr;   
-    //     } else {
-    //         node *next = head->next;
-    //         delete head;
-    //         head = next;
-    //         fake_node.next = head;
-    //     }
-    // }
+    void pop_front() {
+        if (size_ == 0) return;
+        size_--;
+        if (size_ == 1) {
+            delete head;
+            head = nullptr;
+            tail = nullptr;
+        } else {
+            node *next = head->next;
+            delete head;
+            head = next;
+            head->prev = nullptr;
+        }
+    }
 
     // void remove(const_reference value) {
     //     for (auto it = )
