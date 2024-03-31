@@ -220,7 +220,7 @@ public:
     }
 
     ~list() {
-        if (!empty()) {
+        if (!empty() || head != nullptr) {
             for (node *element = this->head;;) {
                 node *next_node = element->next;
                 delete[] element;
@@ -453,6 +453,13 @@ public:
     //     fake_node.next = head;
     //     ++size_;
     // }
+    void head_modifier(node *input) {
+        this->head = input;
+    }
+
+    void tail_modifier(node *input) {
+        this->tail = input;
+    }
 
     void pop_back() {
         if (size_ == 0) return;
@@ -481,6 +488,21 @@ public:
             delete head;
             head = next;
             head->prev = nullptr;
+        }
+    }
+
+    void swap(list& other) {
+        node *other_head = other.begin().node_pointer();
+        node *other_tail = other.end().node_pointer();
+        other.head_modifier(this->head);
+        other.tail_modifier(this->tail);
+        head = other_head;
+        tail = other_tail;
+    }
+
+    void merge(list& other) {
+        for (iterator iter = other.begin(); iter != nullptr; ++iter) {
+            this->push_back(iter.node_pointer()->value);
         }
     }
 

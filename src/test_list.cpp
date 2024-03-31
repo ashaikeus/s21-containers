@@ -104,3 +104,28 @@ TEST(list, pop_front) {
         EXPECT_EQ(value, pointer.node_pointer()->value);
     }
 }
+
+TEST(list, swap) {
+    s21::list<int> s21_list1 = {0, 1, 2};
+    s21::list<int> s21_list2 = {1, 2, 3};
+    s21_list1.swap(s21_list2);
+    int value = 1;
+    for (auto pointer = s21_list1.begin(); pointer != nullptr; ++pointer, value++) {
+        EXPECT_EQ(value, pointer.node_pointer()->value);
+    }
+    value = 0;
+    for (auto pointer = s21_list2.begin(); pointer != nullptr; ++pointer, value++) {
+        EXPECT_EQ(value, pointer.node_pointer()->value);
+    }
+}
+
+TEST(list, merge) {
+    s21::list<int> s21_list = {0, 1, 2};
+    s21::list<int> s21_list2 = {3, 4, 5};
+    s21_list.merge(s21_list2);
+    int value = 0;
+    for (auto pointer = s21_list.begin(); pointer != nullptr; ++pointer, value++) {
+        EXPECT_EQ(value, pointer.node_pointer()->value);
+    }
+    EXPECT_EQ(value, 6);
+}
