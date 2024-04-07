@@ -574,21 +574,20 @@ public:
     }
 
     void sort() {
-        if (size_ < 2) return;
-        node* max = head;
-
-        while (max != nullptr) {
+        bool swapped = true;
+        while (swapped) {
+            swapped = false;
             node* current = head;
-            while (current != max) {
+            while (current->next != nullptr) {
                 if (current->value > current->next->value) {
-                    node* temp = current;
+                    int temp = current->value;
                     current->value = current->next->value;
-                    current->next->value = temp->value;
+                    current->next->value = temp;
+                    swapped = true;
                 }
                 current = current->next;
             }
-            max = max->next;
-        }   
+        }
     }
 
     void printAll() {

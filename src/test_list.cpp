@@ -218,9 +218,6 @@ TEST(list, sort) {
     s21::list<int> s21_list = {0, 1, 2, 15, 52, 15, 9, -27};
     s21::list<int> s21_true = {-27, 0, 1, 2, 9, 15, 15, 52};
     s21_list.sort();
-    s21_list.printAll();
-    std::cout << "---------" << std::endl;
-    s21_true.printAll();
     for (auto l = s21_list.begin(), r = s21_true.begin(); l != nullptr, r != nullptr; ++l, ++r) {
         EXPECT_EQ(l.node_pointer()->value, r.node_pointer()->value);
     }
