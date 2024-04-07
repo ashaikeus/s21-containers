@@ -131,8 +131,18 @@ TEST(list, pop_back) {
     }
 }
 
+TEST(list, pop_back_size_1) {
+    s21::list<int> s21_list = {999};
+    s21_list.pop_back();
+    int value = 0;
+    EXPECT_EQ(s21_list.empty(), true);
+}
+
 TEST(list, push_front) {
-    s21::list<int> s21_list = {1, 2, 3};
+    s21::list<int> s21_list;
+    s21_list.push_front(3);
+    s21_list.push_front(2);
+    s21_list.push_front(1);
     s21_list.push_front(0);
     int value = 0;
     for (auto pointer = s21_list.begin(); pointer != nullptr; ++pointer, value++) {
@@ -155,6 +165,13 @@ TEST(list, pop_front) {
     for (auto pointer = s21_list.end(); pointer != nullptr; --pointer, value--) {
         EXPECT_EQ(value, pointer.node_pointer()->value);
     }
+}
+
+TEST(list, pop_front_size_1) {
+    s21::list<int> s21_list = {999};
+    s21_list.pop_front();
+    int value = 0;
+    EXPECT_EQ(s21_list.empty(), true);
 }
 
 TEST(list, swap) {

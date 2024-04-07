@@ -211,8 +211,7 @@ public:
     }
 
     list(size_type n) : head(nullptr), tail(nullptr), size_(0u) {
-        if (n < 0) throw std::out_of_range("Can't create list of negative size");
-        for (int i = 0; i < n; i++) {
+        for (size_type i = 0u; i < n; i++) {
             this->push_back(T());
         }
     }
@@ -495,7 +494,6 @@ public:
 
     void pop_back() {
         if (size_ == 0) return;
-        size_--;
         if (size_ == 1) {
             delete tail;
             head = nullptr;
@@ -506,11 +504,11 @@ public:
             tail = prev;
             tail->next = nullptr;
         }
+        size_--;
     }
 
     void pop_front() {
         if (size_ == 0) return;
-        size_--;
         if (size_ == 1) {
             delete head;
             head = nullptr;
@@ -521,6 +519,7 @@ public:
             head = next;
             head->prev = nullptr;
         }
+        size_--;
     }
 
     void swap(list& other) {
