@@ -210,6 +210,13 @@ public:
         size_ = 0u;
     }
 
+    list(size_type n) : head(nullptr), tail(nullptr), size_(0u) {
+        if (n < 0) throw std::out_of_range("Can't create list of negative size");
+        for (int i = 0; i < n; i++) {
+            this->push_back(T());
+        }
+    }
+
     list(std::initializer_list<value_type> const &items) {
         head = nullptr;
         tail = nullptr;
@@ -217,6 +224,20 @@ public:
         for (auto item = items.begin(); item != items.end(); item++) {
             this->push_back(*item);
         }
+    }
+
+    list(const list &l) : head(nullptr), tail(nullptr), size_(0u) {
+        node *current = l.head;
+        while (current != nullptr) {
+            this->push_back(current->value);
+            current = current->next;
+        }
+    }
+
+    list(list &&l) : head(l.head), tail(l.tail), size_(l.size()) {
+        l.head = nullptr;
+        l.tail = nullptr;
+        l.size_ = 0u;
     }
 
     ~list() {
@@ -235,6 +256,14 @@ public:
         size_ = 0u;
         head = nullptr;
         tail = nullptr;
+    }
+
+    list& operator=(list &&l) {
+        head = nullptr;
+        tail = nullptr;
+        size = 0u;
+        this = std::copy(l);
+        return this;
     }
 
     // explicit list(size_type count) : list() {
@@ -516,8 +545,59 @@ public:
     }
 
     void reverse() {
-        
+        node* current = head;
+        node* prev = nullptr;
+        node* next = nullptr;
+
+        while (current != nullptr) {
+            next = current->next;
+            current->next = prev;
+            prev = current;
+            current = next;
+        }
+        head = prev;
     }
+
+    void unique() {
+        node* current = head;
+        node* prev_unique = nullptr;
+
+        while (current != nullptr) {
+            if (prev_unique && current->value == prev_unique->value) {
+                erase(iterator(current));
+                current = prev_unique;
+            } else {
+                prev_unique = current;
+            }
+            current = current->next;
+        }
+    }
+
+    void sort() {
+        if (size_ < 2) return;
+        node* max = head;
+
+        while (max != nullptr) {
+            node* current = head;
+            while (current != max) {
+                if (current->value > current->next->value) {
+                    node* temp = current;
+                    current->value = current->next->value;
+                    current->next->value = temp->value;
+                }
+                current = current->next;
+            }
+            max = max->next;
+        }   
+    }
+
+    void printAll() {
+        for (node* current = head; current != nullptr;) {
+            std::cout << current->value << std::endl;
+            current = current->next;
+        }
+    }
+
     // void remove(const_reference value) {
     //     for (auto it = )
     // }
