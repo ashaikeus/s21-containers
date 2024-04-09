@@ -141,7 +141,6 @@ TEST(list, pop_back) {
 TEST(list, pop_back_size_1) {
   s21::list<int> s21_list = {999};
   s21_list.pop_back();
-  int value = 0;
   EXPECT_EQ(s21_list.empty(), true);
 }
 
@@ -179,7 +178,6 @@ TEST(list, pop_front) {
 TEST(list, pop_front_size_1) {
   s21::list<int> s21_list = {999};
   s21_list.pop_front();
-  int value = 0;
   EXPECT_EQ(s21_list.empty(), true);
 }
 
@@ -231,7 +229,7 @@ TEST(list, reverse) {
   s21::list<int> s21_reversed = {9, 52, 15, 2, 1, 0};
   s21_list.reverse();
   for (auto l = s21_list.begin(), r = s21_reversed.begin();
-       l != nullptr, r != nullptr; ++l, ++r) {
+       l != nullptr || r != nullptr; ++l, ++r) {
     EXPECT_EQ(l.node_pointer()->value, r.node_pointer()->value);
   }
 }
@@ -241,7 +239,7 @@ TEST(list, unique) {
   s21::list<int> s21_true = {0, 1, 2, 15, 52, 15, 9};
   s21_list.unique();
   for (auto l = s21_list.begin(), r = s21_true.begin();
-       l != nullptr, r != nullptr; ++l, ++r) {
+       l != nullptr || r != nullptr; ++l, ++r) {
     EXPECT_EQ(l.node_pointer()->value, r.node_pointer()->value);
   }
 }
@@ -251,7 +249,7 @@ TEST(list, sort) {
   s21::list<int> s21_true = {-27, 0, 1, 2, 9, 15, 15, 52};
   s21_list.sort();
   for (auto l = s21_list.begin(), r = s21_true.begin();
-       l != nullptr, r != nullptr; ++l, ++r) {
+       l != nullptr || r != nullptr; ++l, ++r) {
     EXPECT_EQ(l.node_pointer()->value, r.node_pointer()->value);
   }
 }

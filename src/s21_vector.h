@@ -175,7 +175,8 @@ class vector {
   void reserve(size_type new_capacity) {
     if (new_capacity > capacity_) {
       value_type *larger_data_capacity = new value_type[new_capacity];
-      // value_type *larger_data_capacity = (value_type *)calloc(new_capacity, sizeof(value_type));
+      // value_type *larger_data_capacity = (value_type *)calloc(new_capacity,
+      // sizeof(value_type));
       for (size_type element = 0; element < size_ && data_; element++) {
         larger_data_capacity[element] = data_[element];
       }
@@ -226,26 +227,28 @@ class vector {
     return pos;
   }
 
-  template<class... Args>
+  template <class... Args>
   iterator insert_many(iterator pos, Args... vectors) {
-    ([&]
-    {
-      for(int i = 0; i < (int)vectors.size(); i++) {
-        pos = this->insert(pos, vectors[i]);
-        pos++;
-      }
-    } (), ...);
+    (
+        [&] {
+          for (int i = 0; i < (int)vectors.size(); i++) {
+            pos = this->insert(pos, vectors[i]);
+            pos++;
+          }
+        }(),
+        ...);
     return pos;
   }
 
-  template<class... Args>
+  template <class... Args>
   void insert_many_back(Args... vectors) {
-    ([&]
-    {
-      for(int i = 0; i < (int)vectors.size(); i++) {
-        this->push_back(vectors[i]);
-      }
-    } (), ...);
+    (
+        [&] {
+          for (int i = 0; i < (int)vectors.size(); i++) {
+            this->push_back(vectors[i]);
+          }
+        }(),
+        ...);
   }
 
   void erase(iterator pos) {
@@ -266,9 +269,11 @@ class vector {
     size_++;
   }
 
-  void pop_back() { 
-    if (size_ > 0) size_--;
-    else throw std::out_of_range("std::out_of_range");
+  void pop_back() {
+    if (size_ > 0)
+      size_--;
+    else
+      throw std::out_of_range("std::out_of_range");
   }
 
   void swap(vector &other) {

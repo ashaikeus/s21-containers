@@ -1,39 +1,40 @@
-#include "test.h"
 #include <stack>
 
-TEST(stack, standart_constructor) {
-    s21::stack<int> stack_int;
-    std::stack<int> true_stack;
-    EXPECT_EQ(true_stack.size(), stack_int.size());
+#include "test.h"
 
-    s21::stack<char> stack_char;
-    std::stack<char> true_stack_char;
-    EXPECT_EQ(true_stack_char.size(), stack_char.size());
+TEST(stack, standart_constructor) {
+  s21::stack<int> stack_int;
+  std::stack<int> true_stack;
+  EXPECT_EQ(true_stack.size(), stack_int.size());
+
+  s21::stack<char> stack_char;
+  std::stack<char> true_stack_char;
+  EXPECT_EQ(true_stack_char.size(), stack_char.size());
 }
 
 TEST(stack, list_constructor) {
-    s21::stack<int> stack_int = {0, 0, 0, 0};
-    std::stack<int> true_stack;
-    true_stack.push(0);
-    true_stack.push(0);
-    true_stack.push(0);
-    true_stack.push(0);
-    EXPECT_EQ(true_stack.size(), stack_int.size());
-    EXPECT_EQ(true_stack.top(), stack_int.top());
-    stack_int.push(1);
-    true_stack.push(1);
-    EXPECT_EQ(true_stack.size(), stack_int.size());
-    EXPECT_EQ(true_stack.top(), stack_int.top());
+  s21::stack<int> stack_int = {0, 0, 0, 0};
+  std::stack<int> true_stack;
+  true_stack.push(0);
+  true_stack.push(0);
+  true_stack.push(0);
+  true_stack.push(0);
+  EXPECT_EQ(true_stack.size(), stack_int.size());
+  EXPECT_EQ(true_stack.top(), stack_int.top());
+  stack_int.push(1);
+  true_stack.push(1);
+  EXPECT_EQ(true_stack.size(), stack_int.size());
+  EXPECT_EQ(true_stack.top(), stack_int.top());
 }
 
 TEST(stack, list_constructor_empty) {
-    s21::stack<int> stack_int = {};
-    std::stack<int> true_stack = {};
-    EXPECT_EQ(true_stack.size(), stack_int.size());
-    stack_int.push(1);
-    true_stack.push(1);
-    EXPECT_EQ(true_stack.size(), stack_int.size());
-    EXPECT_EQ(true_stack.top(), stack_int.top());
+  s21::stack<int> stack_int = {};
+  std::stack<int> true_stack = {};
+  EXPECT_EQ(true_stack.size(), stack_int.size());
+  stack_int.push(1);
+  true_stack.push(1);
+  EXPECT_EQ(true_stack.size(), stack_int.size());
+  EXPECT_EQ(true_stack.top(), stack_int.top());
 }
 
 TEST(stack, copy_constructor) {
@@ -58,26 +59,26 @@ TEST(stack, move_constructor) {
 }
 
 TEST(stack, top_size) {
-    s21::stack<int> stack_int = {1};
-    std::stack<int> true_stack;
-    true_stack.push(1);
-    EXPECT_EQ(true_stack.size(), stack_int.size());
-    EXPECT_EQ(true_stack.top(), stack_int.top());
+  s21::stack<int> stack_int = {1};
+  std::stack<int> true_stack;
+  true_stack.push(1);
+  EXPECT_EQ(true_stack.size(), stack_int.size());
+  EXPECT_EQ(true_stack.top(), stack_int.top());
 }
 
 TEST(stack, empty_push_pop) {
-    s21::stack<int> stack_int;
-    std::stack<int> true_stack;
-    EXPECT_EQ(stack_int.empty(), true_stack.empty());
-    true_stack.push(1);
-    stack_int.push(1);
-    EXPECT_EQ(true_stack.size(), stack_int.size());
-    EXPECT_EQ(true_stack.top(), stack_int.top());
-    EXPECT_EQ(stack_int.empty(), true_stack.empty());
-    true_stack.pop();
-    stack_int.pop();
-    EXPECT_EQ(true_stack.size(), stack_int.size());
-    EXPECT_EQ(stack_int.empty(), true_stack.empty());
+  s21::stack<int> stack_int;
+  std::stack<int> true_stack;
+  EXPECT_EQ(stack_int.empty(), true_stack.empty());
+  true_stack.push(1);
+  stack_int.push(1);
+  EXPECT_EQ(true_stack.size(), stack_int.size());
+  EXPECT_EQ(true_stack.top(), stack_int.top());
+  EXPECT_EQ(stack_int.empty(), true_stack.empty());
+  true_stack.pop();
+  stack_int.pop();
+  EXPECT_EQ(true_stack.size(), stack_int.size());
+  EXPECT_EQ(stack_int.empty(), true_stack.empty());
 }
 
 TEST(stack, swap) {

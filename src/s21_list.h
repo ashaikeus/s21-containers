@@ -241,7 +241,7 @@ class list {
   list &operator=(list &&l) {
     head = nullptr;
     tail = nullptr;
-    size = 0u;
+    size_ = 0u;
     this = std::copy(l);
     return this;
   }

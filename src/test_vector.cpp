@@ -3,7 +3,7 @@
 template <typename T>
 void print_vector(const s21::vector<T>& vector) {
   for (size_t element = 0; element < vector.size(); element++) {
-    std::cout << vector[element] << " element = " << element <<std::endl;
+    std::cout << vector[element] << " element = " << element << std::endl;
   }
   std::cout << "###################\n";
 }
@@ -364,7 +364,7 @@ TEST(vector, insert_many_back) {
   s21::vector<int> vector3 = {6, 7, 8};
   vector.insert_many_back(vector2, vector3);
   EXPECT_EQ(9u, vector.size());
-  for(int element = 0; element < (int)vector.size(); element++) {
+  for (int element = 0; element < (int)vector.size(); element++) {
     EXPECT_EQ(element, vector[element]);
   }
   vector.insert_many_back();

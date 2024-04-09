@@ -1,10 +1,6 @@
 #ifndef S21_QUEUE_H_
 #define S21_QUEUE_H_
 
-#include "s21_containers.h"
-
-// #include <utility>
-
 namespace s21 {
 
 template <class T>

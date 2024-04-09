@@ -52,7 +52,6 @@ class Map {
    public:
     MapIterator() : current_(nullptr), successor_(nullptr) {}
 
-
     MapIterator(Node* node) : current_(node), successor_(nullptr) {}
 
     MapIterator operator++() {
